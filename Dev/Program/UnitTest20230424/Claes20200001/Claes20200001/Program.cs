@@ -56,7 +56,7 @@ namespace Charlotte
 
 			//new Test0001().Test01(); // SCommon.Base32
 			//new Test0001().Test02(); // SCommon.Base32
-			//new Test0001().Test03(); // SCommon.Base32
+			new Test0001().Test03(); // SCommon.Base32
 			//new Test0002().Test01(); // SCommon.Base64
 			//new Test0002().Test02(); // SCommon.Base64
 			//new Test0002().Test03(); // SCommon.Base64
@@ -83,7 +83,7 @@ namespace Charlotte
 			//new Test0010().Test03(); // SCommon.Tokenize
 			//new Test0010().Test04(); // SCommon.Tokenize
 			//new Test0011().Test01(); // SCommon.Generate
-			new Test0012().Test01(); // SCommon.SimpleDateTime
+			//new Test0012().Test01(); // SCommon.SimpleDateTime
 
 			// --
 		}

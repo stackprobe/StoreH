@@ -2245,7 +2245,7 @@ namespace Charlotte.Commons
 				{
 					int padding = ((5 - data.Length % 5) * 8) / 5;
 
-					data = SCommon.Join(new byte[][]
+					data = SCommon.Join(new byte[][] 
 					{
 						data,
 						Enumerable.Repeat((byte)0, 5 - data.Length % 5).ToArray(),
@@ -2259,28 +2259,29 @@ namespace Charlotte.Commons
 
 			private string EncodeEven(byte[] data)
 			{
-				StringBuilder buff = new StringBuilder((data.Length / 5) * 8);
-				int index = 0;
+				char[] buff = new char[(data.Length / 5) * 8];
+				int reader = 0;
+				int writer = 0;
 				ulong value;
 
-				while (index < data.Length)
+				while (reader < data.Length)
 				{
-					value = (ulong)data[index++] << 32;
-					value |= (ulong)data[index++] << 24;
-					value |= (ulong)data[index++] << 16;
-					value |= (ulong)data[index++] << 8;
-					value |= (ulong)data[index++];
+					value = (ulong)data[reader++] << 32;
+					value |= (ulong)data[reader++] << 24;
+					value |= (ulong)data[reader++] << 16;
+					value |= (ulong)data[reader++] << 8;
+					value |= (ulong)data[reader++];
 
-					buff.Append(this.Chars[(value >> 35) & 0x1f]);
-					buff.Append(this.Chars[(value >> 30) & 0x1f]);
-					buff.Append(this.Chars[(value >> 25) & 0x1f]);
-					buff.Append(this.Chars[(value >> 20) & 0x1f]);
-					buff.Append(this.Chars[(value >> 15) & 0x1f]);
-					buff.Append(this.Chars[(value >> 10) & 0x1f]);
-					buff.Append(this.Chars[(value >> 5) & 0x1f]);
-					buff.Append(this.Chars[value & 0x1f]);
+					buff[writer++] = this.Chars[(value >> 35) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 30) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 25) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 20) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 15) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 10) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 5) & 0x1f];
+					buff[writer++] = this.Chars[value & 0x1f];
 				}
-				return buff.ToString();
+				return new string(buff);
 			}
 
 			/// <summary>
@@ -2305,8 +2306,12 @@ namespace Charlotte.Commons
 				}
 				else
 				{
-					data = DecodeEven(str + new string(this.Chars[0], 8 - str.Length % 8));
-					data = SCommon.GetPart(data, 0, data.Length - 5 + ((str.Length % 8) * 5) / 8);
+					int padding = 5 - ((str.Length % 8) * 5) / 8;
+
+					str += new string(this.Chars[0], 8 - str.Length % 8);
+
+					data = DecodeEven(str);
+					data = SCommon.GetPart(data, 0, data.Length - padding);
 				}
 				return data;
 			}
