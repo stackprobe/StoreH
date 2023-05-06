@@ -35,14 +35,14 @@ namespace Charlotte.Commons
 				WorkingDir.Root.Delete();
 				WorkingDir.Root = null;
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				WriteLog(e);
+				WriteLog(ex);
 
 				// ここに到達する場合は想定外の致命的なエラーである。-> 何か出すべき。
 				// ウィンドウ非表示で実行されているかもしれないのでメッセージダイアログを出す。
 
-				MessageBox.Show("" + e, "Claes20200001 / Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show("" + ex, "Claes20200001 / Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				//Console.WriteLine("Press ENTER key. (Error termination)");
 				//Console.ReadLine();
