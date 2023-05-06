@@ -450,9 +450,9 @@ namespace Charlotte.GameCommons
 				{
 					return UnaddHash_Main(data);
 				}
-				catch (Exception e)
+				catch (Exception ex)
 				{
-					throw new Exception("読み込まれたデータは破損しているかバージョンが異なります。", e);
+					throw new Exception("読み込まれたデータは破損しているかバージョンが異なります。", ex);
 				}
 			}
 

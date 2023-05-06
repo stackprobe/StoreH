@@ -38,10 +38,10 @@ namespace Charlotte.GUICommons
 			});
 		}
 
-		private static void ErrorTermination(object e)
+		private static void ErrorTermination(object ex)
 		{
 			MessageBox.Show(
-				"" + e,
+				"" + ex,
 				Path.GetFileNameWithoutExtension(ProcMain.SelfFile) + " / Error",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Error

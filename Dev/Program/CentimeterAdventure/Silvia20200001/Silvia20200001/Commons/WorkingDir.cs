@@ -37,9 +37,9 @@ namespace Charlotte.Commons
 					{
 						Directory.Delete(this.Dir, true);
 					}
-					catch (Exception e)
+					catch (Exception ex)
 					{
-						ProcMain.WriteLog(e);
+						ProcMain.WriteLog(ex);
 					}
 
 					this.Dir = null;
@@ -111,9 +111,9 @@ namespace Charlotte.Commons
 				{
 					Directory.Delete(this.Dir, true);
 				}
-				catch (Exception e)
+				catch (Exception ex)
 				{
-					ProcMain.WriteLog(e);
+					ProcMain.WriteLog(ex);
 				}
 
 				this.Dir = null;

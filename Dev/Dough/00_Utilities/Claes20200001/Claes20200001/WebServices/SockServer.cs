@@ -70,9 +70,9 @@ namespace Charlotte.WebServices
 					{
 						listener.Bind(endPoint);
 					}
-					catch (Exception e)
+					catch (Exception ex)
 					{
-						throw new Exception("バインドに失敗しました。指定されたポート番号は使用中です。", e);
+						throw new Exception("バインドに失敗しました。指定されたポート番号は使用中です。", ex);
 					}
 					listener.Listen(this.Backlog);
 					listener.Blocking = false;
@@ -130,12 +130,12 @@ namespace Charlotte.WebServices
 									waitMillis = 0; // reset
 								}
 							}
-							catch (Exception e)
+							catch (Exception ex)
 							{
-								if (channel.FirstLineRecving && e is SockChannel.RecvIdleTimeoutException)
+								if (channel.FirstLineRecving && ex is SockChannel.RecvIdleTimeoutException)
 									SockCommon.WriteLog(SockCommon.ErrorLevel_e.FIRST_LINE_TIMEOUT, null);
 								else
-									SockCommon.WriteLog(SockCommon.ErrorLevel_e.NETWORK_OR_SERVER_LOGIC, e);
+									SockCommon.WriteLog(SockCommon.ErrorLevel_e.NETWORK_OR_SERVER_LOGIC, ex);
 
 								size = 0;
 							}
@@ -164,9 +164,9 @@ namespace Charlotte.WebServices
 					this.Stop();
 				}
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				SockCommon.WriteLog(SockCommon.ErrorLevel_e.FATAL, e);
+				SockCommon.WriteLog(SockCommon.ErrorLevel_e.FATAL, ex);
 			}
 
 			SockCommon.WriteLog(SockCommon.ErrorLevel_e.INFO, "サーバーを終了しました。");
@@ -178,11 +178,11 @@ namespace Charlotte.WebServices
 			{
 				return SockCommon.NB("conn", () => listener.Accept());
 			}
-			catch (SocketException e)
+			catch (SocketException ex)
 			{
-				if (e.ErrorCode != 10035)
+				if (ex.ErrorCode != 10035)
 				{
-					throw new Exception("接続失敗(" + e.ErrorCode + ")", e);
+					throw new Exception("接続失敗(" + ex.ErrorCode + ")", ex);
 				}
 				return null;
 			}
@@ -202,18 +202,18 @@ namespace Charlotte.WebServices
 			{
 				channel.Handler.Shutdown(SocketShutdown.Both);
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				SockCommon.WriteLog(SockCommon.ErrorLevel_e.NETWORK, e);
+				SockCommon.WriteLog(SockCommon.ErrorLevel_e.NETWORK, ex);
 			}
 
 			try
 			{
 				channel.Handler.Close();
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				SockCommon.WriteLog(SockCommon.ErrorLevel_e.NETWORK, e);
+				SockCommon.WriteLog(SockCommon.ErrorLevel_e.NETWORK, ex);
 			}
 
 			channel.BodyOutputStream.Dispose();

@@ -106,9 +106,9 @@ namespace Charlotte.GameCommons
 			{
 				// noop
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				ProcMain.WriteLog(e);
+				ProcMain.WriteLog(ex);
 			}
 			finally
 			{

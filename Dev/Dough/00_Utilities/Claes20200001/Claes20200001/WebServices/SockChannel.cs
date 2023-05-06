@@ -106,11 +106,11 @@ namespace Charlotte.WebServices
 					a_return(recvSize);
 					break;
 				}
-				catch (SocketException e)
+				catch (SocketException ex)
 				{
-					if (e.ErrorCode != 10035)
+					if (ex.ErrorCode != 10035)
 					{
-						throw new Exception("受信失敗(" + e.ErrorCode + ")", e);
+						throw new Exception("受信失敗(" + ex.ErrorCode + ")", ex);
 					}
 				}
 				if (this.P_IdleTimeoutMillis != -1 && this.P_IdleTimeoutMillis < (DateTime.Now - startedTime).TotalMilliseconds)
@@ -178,11 +178,11 @@ namespace Charlotte.WebServices
 					a_return(sentSize);
 					break;
 				}
-				catch (SocketException e)
+				catch (SocketException ex)
 				{
-					if (e.ErrorCode != 10035)
+					if (ex.ErrorCode != 10035)
 					{
-						throw new Exception("送信失敗(" + e.ErrorCode + ")", e);
+						throw new Exception("送信失敗(" + ex.ErrorCode + ")", ex);
 					}
 				}
 				if (this.P_IdleTimeoutMillis != -1 && this.P_IdleTimeoutMillis < (DateTime.Now - startedTime).TotalMilliseconds)
