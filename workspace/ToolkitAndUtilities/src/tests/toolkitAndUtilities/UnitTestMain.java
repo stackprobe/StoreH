@@ -29,9 +29,9 @@ public class UnitTestMain {
 			//test0005_04(); // SCommon.tokenize
 			//test0006_01(); // SCommon.merge
 			//test0007_01(); // SCommon.Hex
-			//test0008_01(); // SCommon.SimpleDateTime
+			test0008_01(); // SCommon.SimpleDateTime
 			//test0009_01(); // SCommon.TimeStampToSec
-			test0009_02(); // SCommon.TimeStampToSec
+			//test0009_02(); // SCommon.TimeStampToSec
 
 			// --
 		}
@@ -377,6 +377,11 @@ public class UnitTestMain {
 		System.out.println(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.now().toDate()));
 		System.out.println(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.now().toCalendar()));
 		System.out.println(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.now().toLocalDateTime()));
+
+		System.out.println(SCommon.SimpleDateTime.now().toTimeStamp());
+		System.out.println(SCommon.TimeStampToSec.toTimeStamp(SCommon.SimpleDateTime.now().toSec()));
+		System.out.println(SCommon.SimpleDateTime.now().toSec());
+		System.out.println(SCommon.TimeStampToSec.toSec(SCommon.SimpleDateTime.now().toTimeStamp()));
 
 		System.out.println("done! (TEST-0008-01)");
 	}
