@@ -62,7 +62,7 @@ namespace Charlotte
 			//new Test0002().Test03(); // SCommon.Base64
 			//new Test0003().Test01(); // RandomUnit
 			//new Test0003().Test02(); // RandomUnit
-			new Test0003().Test03(); // RandomUnit
+			//new Test0003().Test03(); // RandomUnit
 			//new Test0003().Test04(); // RandomUnit
 			//new Test0003().Test05(); // RandomUnit
 			//new Test0004().Test01(); // SCommon.Serializer
@@ -83,6 +83,7 @@ namespace Charlotte
 			//new Test0010().Test03(); // SCommon.Tokenize
 			//new Test0010().Test04(); // SCommon.Tokenize
 			//new Test0011().Test01(); // SCommon.Generate
+			new Test0012().Test01(); // SCommon.SimpleDateTime
 
 			// --
 		}

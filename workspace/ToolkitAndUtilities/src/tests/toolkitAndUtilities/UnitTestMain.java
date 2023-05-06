@@ -1,6 +1,7 @@
 package tests.toolkitAndUtilities;
 
 import java.io.File;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -10,7 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import toolkitAndUtilities.SCommon;
-import toolkitAndUtilities.SCommon.SimpleDateTime;
 
 public class UnitTestMain {
 	public static void main(String[] args) {
@@ -29,7 +29,9 @@ public class UnitTestMain {
 			//test0005_04(); // SCommon.tokenize
 			//test0006_01(); // SCommon.merge
 			//test0007_01(); // SCommon.Hex
-			test0008_01(); // SCommon.SimpleDateTime
+			//test0008_01(); // SCommon.SimpleDateTime
+			//test0009_01(); // SCommon.TimeStampToSec
+			test0009_02(); // SCommon.TimeStampToSec
 
 			// --
 		}
@@ -368,13 +370,13 @@ public class UnitTestMain {
 	}
 
 	private static void test0008_01() {
-		System.out.println(SimpleDateTime.now().toDate());
-		System.out.println(toSimpleDateTimeString(SimpleDateTime.now().toCalendar()));
-		System.out.println(SimpleDateTime.now().toLocalDateTime());
+		System.out.println(SCommon.SimpleDateTime.now().toDate());
+		System.out.println(toSimpleDateTimeString(SCommon.SimpleDateTime.now().toCalendar()));
+		System.out.println(SCommon.SimpleDateTime.now().toLocalDateTime());
 
-		System.out.println(new SimpleDateTime(SimpleDateTime.now().toDate()));
-		System.out.println(new SimpleDateTime(SimpleDateTime.now().toCalendar()));
-		System.out.println(new SimpleDateTime(SimpleDateTime.now().toLocalDateTime()));
+		System.out.println(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.now().toDate()));
+		System.out.println(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.now().toCalendar()));
+		System.out.println(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.now().toLocalDateTime()));
 
 		System.out.println("done! (TEST-0008-01)");
 	}
@@ -387,5 +389,165 @@ public class UnitTestMain {
 				, calendar.get(Calendar.HOUR_OF_DAY)
 				, calendar.get(Calendar.MINUTE)
 				, calendar.get(Calendar.SECOND));
+	}
+
+	private static void test0009_01() {
+		test0009_01_a(10115235959L, 1);
+		test0009_01_a(10201235959L, 3);
+		test0009_01_a(10301235959L, 10);
+		test0009_01_a(10401235959L, 30);
+		test0009_01_a(11231235959L, 100);
+		test0009_01_a(31231235959L, 300);
+		test0009_01_a(101231235959L, 1000);
+		test0009_01_a(301231235959L, 3000);
+		test0009_01_a(1001231235959L, 10000);
+		test0009_01_a(3001231235959L, 30000);
+		test0009_01_a(10001231235959L, 100000);
+		test0009_01_a(30001231235959L, 300000);
+		test0009_01_a(90001231235959L, 1000000);
+
+		System.out.println("OK!");
+	}
+
+	private static void test0009_01_a(long maxTimeStamp, int maxSecAdd) {
+		System.out.println(SCommon.joining(", ", "TEST-0009-01", maxTimeStamp, maxSecAdd));
+
+		long timeStamp = 10101000000L;
+		long sec = 0;
+
+		while (timeStamp <= maxTimeStamp) {
+			long retTimeStamp = SCommon.TimeStampToSec.toTimeStamp(sec);
+			long retSec = SCommon.TimeStampToSec.toSec(timeStamp);
+
+			if (retTimeStamp != timeStamp) {
+				throw null;
+			}
+			if (retSec != sec) {
+				throw null;
+			}
+
+			// ----
+
+			int secAdd = SCommon.cryptRandom.getRange(1, maxSecAdd);
+
+			timeStamp = test_addSecToTimeStamp(timeStamp, secAdd);
+			sec += secAdd;
+		}
+		System.out.println("OK");
+	}
+
+	private static void test0009_02() {
+		test0009_02_a(10000101000000L, 30001231235959L, 86400);
+		test0009_02_a(19000101000000L, 21001231235959L, 10000);
+		test0009_02_a(19500101000000L, 20501231235959L, 3000);
+		test0009_02_a(19900101000000L, 20101231235959L, 1000);
+		test0009_02_a(20200101000000L, 20301231235959L, 300);
+		test0009_02_a(20200101000000L, 20251231235959L, 100);
+
+		System.out.println("OK!");
+	}
+
+	private static void test0009_02_a(long minTimeStamp, long maxTimeStamp, int maxSecAdd) {
+		System.out.println(SCommon.joining(", ", "TEST-0006-02", minTimeStamp, maxTimeStamp, maxSecAdd));
+
+		long timeStamp = minTimeStamp;
+		long sec = test_timeStampToSec(timeStamp);
+
+		while (timeStamp <= maxTimeStamp) {
+			long retTimeStamp = SCommon.TimeStampToSec.toTimeStamp(sec);
+			long retSec = SCommon.TimeStampToSec.toSec(timeStamp);
+
+			if (retTimeStamp != timeStamp) {
+				throw null;
+			}
+			if (retSec != sec) {
+				throw null;
+			}
+
+			// ----
+
+			int secAdd = SCommon.cryptRandom.getRange(1, maxSecAdd);
+
+			timeStamp = test_addSecToTimeStamp(timeStamp, secAdd);
+			sec += secAdd;
+		}
+		System.out.println("OK");
+	}
+
+	private static long test_timeStampToSec(long targetTimeStamp) {
+
+		long timeStamp = 10101000000L;
+		long sec = 0;
+
+		for (int secAdd = 1000000; 0 < secAdd; secAdd /= 2) {
+
+			for (; ; ) {
+
+				long nextTimeStamp = test_addSecToTimeStamp(timeStamp, secAdd);
+				long nextSec = sec + secAdd;
+
+				if (targetTimeStamp < nextTimeStamp) {
+					break;
+				}
+
+				timeStamp = nextTimeStamp;
+				sec = nextSec;
+			}
+		}
+
+		if (timeStamp != targetTimeStamp) {
+			throw null; // 2bs
+		}
+		if (sec != SCommon.TimeStampToSec.toSec(targetTimeStamp)) {
+			throw null; // 2bs
+		}
+
+		return sec;
+	}
+
+	private static long test_addSecToTimeStamp(long timeStamp, int secAdd) {
+
+		int s = (int)(timeStamp % 100);
+		timeStamp /= 100;
+		int i = (int)(timeStamp % 100);
+		timeStamp /= 100;
+		int h = (int)(timeStamp % 100);
+		timeStamp /= 100;
+		int d = (int)(timeStamp % 100);
+		timeStamp /= 100;
+		int m = (int)(timeStamp % 100);
+		timeStamp /= 100;
+		int y = (int)timeStamp;
+
+		s += secAdd;
+		i += s / 60; s %= 60;
+		h += i / 60; i %= 60;
+		d += h / 24; h %= 24;
+
+		for (; ; ) {
+			int days = YearMonth.of(y, m).lengthOfMonth();
+
+			if (d <= days) {
+				break;
+			}
+
+			d -= days;
+			m++;
+
+			if (12 < m) {
+				m -= 12;
+				y++;
+			}
+		}
+
+		long returnTimeStamp =
+				y * 10000000000L +
+				m * 100000000L +
+				d * 1000000L +
+				h * 10000L +
+				i * 100L +
+				s;
+
+		return returnTimeStamp;
 	}
 }
