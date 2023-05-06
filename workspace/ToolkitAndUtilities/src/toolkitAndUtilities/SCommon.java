@@ -8,8 +8,11 @@ import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1004,12 +1007,339 @@ public class SCommon {
 		}
 	}
 
+	/**
+	 * 1/1/1 00:00:00 - 922337203/12/31 23:59:59
+	 */
 	public static class TimeStampToSec {
-		// TODO
+		private static final int YEAR_MIN = 1;
+		private static final int YEAR_MAX = 922337203;
+
+		private static final long TIME_STAMP_MIN = 10101000000L;
+		private static final long TIME_STAMP_MAX = 9223372031231235959L;
+
+		public static long toSec(long timeStamp) {
+			if (timeStamp < TIME_STAMP_MIN || TIME_STAMP_MAX < timeStamp) {
+				return 0;
+			}
+
+			int s = (int)(timeStamp % 100);
+			timeStamp /= 100;
+			int i = (int)(timeStamp % 100);
+			timeStamp /= 100;
+			int h = (int)(timeStamp % 100);
+			timeStamp /= 100;
+			int d = (int)(timeStamp % 100);
+			timeStamp /= 100;
+			int m = (int)(timeStamp % 100);
+			int y = (int)(timeStamp / 100);
+
+			if (//y < YEAR_MIN || YEAR_MAX < y ||
+					m < 1 || 12 < m ||
+					d < 1 || 31 < d ||
+					h < 0 || 23 < h ||
+					i < 0 || 59 < i ||
+					s < 0 || 59 < s) {
+				return 0;
+			}
+
+			if (m <= 2) {
+				y--;
+			}
+
+			long ret = y / 400;
+			ret *= 365 * 400 + 97;
+
+			y %= 400;
+
+			ret += y * 365;
+			ret += y / 4;
+			ret -= y / 100;
+
+			if (2 < m) {
+				ret -= 31 * 10 - 4;
+				m -= 3;
+				ret += (m / 5) * (31 * 5 - 2);
+				m %= 5;
+				ret += (m / 2) * (31 * 2 - 1);
+				m %= 2;
+				ret += m * 31;
+			}
+			else {
+				ret += (m - 1) * 31;
+			}
+			ret += d - 1;
+			ret *= 24;
+			ret += h;
+			ret *= 60;
+			ret += i;
+			ret *= 60;
+			ret += s;
+
+			return ret;
+		}
+
+		public static long toTimeStamp(long sec) {
+			if (sec < 0) {
+				return TIME_STAMP_MIN;
+			}
+
+			int s = (int)(sec % 60);
+			sec /= 60;
+			int i = (int)(sec % 60);
+			sec /= 60;
+			int h = (int)(sec % 24);
+			sec /= 24;
+
+			int day = (int)(sec % 146097);
+			sec /= 146097;
+			sec *= 400;
+			sec++;
+
+			if (YEAR_MAX < sec) {
+				return TIME_STAMP_MAX;
+			}
+
+			int y = (int)sec;
+			int m = 1;
+			int d;
+
+			day += Math.min((day + 306) / 36524, 3);
+			y += (day / 1461) * 4;
+			day %= 1461;
+
+			day += Math.min((day + 306) / 365, 3);
+			y += day / 366;
+			day %= 366;
+
+			if (60 <= day) {
+				m += 2;
+				day -= 60;
+				m += (day / 153) * 5;
+				day %= 153;
+				m += (day / 61) * 2;
+				day %= 61;
+			}
+			m += day / 31;
+			day %= 31;
+			d = day + 1;
+
+			if (y < YEAR_MIN) {
+				return TIME_STAMP_MIN;
+			}
+			if (YEAR_MAX < y) {
+				return TIME_STAMP_MAX;
+			}
+			if (//y < YEAR_MIN || YEAR_MAX < y ||
+					m < 1 || 12 < m ||
+					d < 1 || 31 < d ||
+					h < 0 || 23 < h ||
+					m < 0 || 59 < m ||
+					s < 0 || 59 < s) {
+				throw null; // never
+			}
+
+			long returnValue =
+					y * 10000000000L +
+					m * 100000000L +
+					d * 1000000L +
+					h * 10000L +
+					i * 100L +
+					s;
+			return returnValue;
+		}
+
+		public static long toSec(Date date) {
+			return toSec(toTimeStamp(date));
+		}
+
+		public static long toSec(Calendar calendar) {
+			return toSec(toTimeStamp(calendar));
+		}
+
+		public static long toSec(LocalDateTime dateTime) {
+			return toSec(toTimeStamp(dateTime));
+		}
+
+		public static long toTimeStamp(Date date) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			return toTimeStamp(calendar);
+		}
+
+		public static long toTimeStamp(Calendar calendar) {
+
+			int y = calendar.get(Calendar.YEAR);
+			int m = calendar.get(Calendar.MONTH) + 1; // 0-11 -> 1-12
+			int d = calendar.get(Calendar.DAY_OF_MONTH);
+			int h = calendar.get(Calendar.HOUR_OF_DAY);
+			int i = calendar.get(Calendar.MINUTE);
+			int s = calendar.get(Calendar.SECOND);
+
+			long returnValue =
+					y * 10000000000L +
+					m * 100000000L +
+					d * 1000000L +
+					h * 10000L +
+					i * 100L +
+					s;
+			return returnValue;
+		}
+
+		public static long toTimeStamp(LocalDateTime dateTime) {
+
+			int y = dateTime.getYear();
+			int m = dateTime.getMonthValue(); // 1-12
+			int d = dateTime.getDayOfMonth();
+			int h = dateTime.getHour();
+			int i = dateTime.getMinute();
+			int s = dateTime.getSecond();
+
+			long returnValue =
+					y * 10000000000L +
+					m * 100000000L +
+					d * 1000000L +
+					h * 10000L +
+					i * 100L +
+					s;
+			return returnValue;
+		}
 	}
 
+	/**
+	 * 1/1/1 00:00:00 - 922337203/12/31 23:59:59
+	 */
 	public static class SimpleDateTime {
-		// TODO
+
+		private int year;
+		private int month;
+		private int day;
+		private int hour;
+		private int minute;
+		private int second;
+		private String weekday;
+
+		public static SimpleDateTime now() {
+			return new SimpleDateTime(LocalDateTime.now());
+		}
+
+		public static SimpleDateTime fromTimeStamp(long timeStamp) {
+			return new SimpleDateTime(TimeStampToSec.toSec(timeStamp));
+		}
+
+		public static SimpleDateTime fromSec(long sec) {
+			return new SimpleDateTime(sec);
+		}
+
+		public SimpleDateTime(Date date) {
+			this(TimeStampToSec.toSec(date));
+		}
+
+		public SimpleDateTime(Calendar calendar) {
+			this(TimeStampToSec.toSec(calendar));
+		}
+
+		public SimpleDateTime(LocalDateTime dateTime) {
+			this(TimeStampToSec.toSec(dateTime));
+		}
+
+		private SimpleDateTime(long sec) {
+			long timeStamp = TimeStampToSec.toTimeStamp(sec);
+			long t = timeStamp;
+
+			second = (int)(t % 100);
+			t /= 100;
+			minute = (int)(t % 100);
+			t /= 100;
+			hour = (int)(t % 100);
+			t /= 100;
+			day = (int)(t % 100);
+			t /= 100;
+			month = (int)(t % 100);
+			year = (int)(t / 100);
+
+			weekday = new String(new char[] { "月火水木金土日".charAt((int)((TimeStampToSec.toSec(timeStamp) / 86400) % 7)) });
+		}
+
+		public int getYear() {
+			return year;
+		}
+
+		public int getMonth() {
+			return month;
+		}
+
+		public int getDay() {
+			return day;
+		}
+
+		public int getHour() {
+			return hour;
+		}
+
+		public int getMinute() {
+			return minute;
+		}
+
+		public int getSecond() {
+			return second;
+		}
+
+		public String getWeekday() {
+			return weekday;
+		}
+
+		public String toString() {
+			return toString("yyyy/MM/dd (E) HH:mm:ss");
+		}
+
+		public String toString(String format) {
+			String ret = format;
+
+			ret = ret.replace("yyyy", String.format("%d", year));
+			ret = ret.replace("MM", String.format("%02d", month));
+			ret = ret.replace("dd", String.format("%02d", day));
+			ret = ret.replace("HH", String.format("%02d", hour));
+			ret = ret.replace("mm", String.format("%02d", minute));
+			ret = ret.replace("ss", String.format("%02d", second));
+			ret = ret.replace("E", weekday);
+
+			return ret;
+		}
+
+		public Date toDate() {
+			return this.toCalendar().getTime();
+		}
+
+		public Calendar toCalendar() {
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.YEAR, year);
+			calendar.set(Calendar.MONTH, month - 1); // 1-12 -> 0-11
+			calendar.set(Calendar.DAY_OF_MONTH, day);
+			calendar.set(Calendar.HOUR_OF_DAY, hour);
+			calendar.set(Calendar.MINUTE, minute);
+			calendar.set(Calendar.SECOND, second);
+			calendar.set(Calendar.MILLISECOND, 0);
+			return calendar;
+		}
+
+		public LocalDateTime toLocalDateTime() {
+			return LocalDateTime.of(year, month, day, hour, minute, second);
+		}
+
+		public long toTimeStamp() {
+			long returnValue =
+					10000000000L * year +
+					100000000L * month +
+					1000000L * day +
+					10000L * hour +
+					100L * minute +
+					second;
+			return returnValue;
+		}
+
+		public long toSec() {
+			return TimeStampToSec.toSec(toTimeStamp());
+		}
 	}
 
 	public static <T> void merge(

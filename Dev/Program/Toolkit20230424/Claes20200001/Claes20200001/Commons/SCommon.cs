@@ -2467,18 +2467,18 @@ namespace Charlotte.Commons
 			public static long ToSec(long timeStamp)
 			{
 				if (timeStamp < TIME_STAMP_MIN || TIME_STAMP_MAX < timeStamp)
-					return 0L;
+					return 0;
 
-				int s = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int i = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int h = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int d = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int m = (int)(timeStamp % 100L);
-				int y = (int)(timeStamp / 100L);
+				int s = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int i = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int h = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int d = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int m = (int)(timeStamp % 100);
+				int y = (int)(timeStamp / 100);
 
 				if (
 					//y < YEAR_MIN || YEAR_MAX < y ||
@@ -2488,7 +2488,7 @@ namespace Charlotte.Commons
 					i < 0 || 59 < i ||
 					s < 0 || 59 < s
 					)
-					return 0L;
+					return 0;
 
 				if (m <= 2)
 					y--;
@@ -2529,15 +2529,15 @@ namespace Charlotte.Commons
 
 			public static long ToTimeStamp(long sec)
 			{
-				if (sec < 0L)
+				if (sec < 0)
 					return TIME_STAMP_MIN;
 
-				int s = (int)(sec % 60L);
-				sec /= 60L;
-				int i = (int)(sec % 60L);
-				sec /= 60L;
-				int h = (int)(sec % 24L);
-				sec /= 24L;
+				int s = (int)(sec % 60);
+				sec /= 60;
+				int i = (int)(sec % 60);
+				sec /= 60;
+				int h = (int)(sec % 24);
+				sec /= 24;
 
 				int day = (int)(sec % 146097);
 				sec /= 146097;
@@ -2641,27 +2641,32 @@ namespace Charlotte.Commons
 				return new SimpleDateTime(TimeStampToSec.ToSec(timeStamp));
 			}
 
+			public static SimpleDateTime FromSec(long sec)
+			{
+				return new SimpleDateTime(sec);
+			}
+
 			public SimpleDateTime(DateTime dateTime)
 				: this(TimeStampToSec.ToSec(dateTime))
 			{ }
 
-			public SimpleDateTime(long sec)
+			private SimpleDateTime(long sec)
 			{
 				long timeStamp = TimeStampToSec.ToTimeStamp(sec);
 				long t = timeStamp;
 
-				this.Second = (int)(t % 100L);
-				t /= 100L;
-				this.Minute = (int)(t % 100L);
-				t /= 100L;
-				this.Hour = (int)(t % 100L);
-				t /= 100L;
-				this.Day = (int)(t % 100L);
-				t /= 100L;
-				this.Month = (int)(t % 100L);
-				this.Year = (int)(t / 100L);
+				this.Second = (int)(t % 100);
+				t /= 100;
+				this.Minute = (int)(t % 100);
+				t /= 100;
+				this.Hour = (int)(t % 100);
+				t /= 100;
+				this.Day = (int)(t % 100);
+				t /= 100;
+				this.Month = (int)(t % 100);
+				this.Year = (int)(t / 100);
 
-				this.Weekday = new string(new char[] { "月火水木金土日"[(int)(TimeStampToSec.ToSec(timeStamp) / 86400 % 7)] });
+				this.Weekday = new string(new char[] { "月火水木金土日"[(int)((TimeStampToSec.ToSec(timeStamp) / 86400) % 7)] });
 			}
 
 			public override string ToString()
