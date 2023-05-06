@@ -2245,7 +2245,7 @@ namespace Charlotte.Commons
 				{
 					int padding = ((5 - data.Length % 5) * 8) / 5;
 
-					data = SCommon.Join(new byte[][] 
+					data = SCommon.Join(new byte[][]
 					{
 						data,
 						Enumerable.Repeat((byte)0, 5 - data.Length % 5).ToArray(),
