@@ -110,8 +110,8 @@
     <Compile Include="Pictures.cs" />
     <Compile Include="SoundEffects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\Test0001.cs" />
     <Compile Include="TProgram.cs" />
+    <Compile Include="Tests\Test0001.cs" />
     <EmbeddedResource Include="GameCommons\LibbonDialog.resx">
       <DependentUpon>LibbonDialog.cs</DependentUpon>
     </EmbeddedResource>
