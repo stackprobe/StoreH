@@ -3,12 +3,14 @@ package tests.toolkitAndUtilities;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import toolkitAndUtilities.SCommon;
+import toolkitAndUtilities.SCommon.SimpleDateTime;
 
 public class UnitTestMain {
 	public static void main(String[] args) {
@@ -26,7 +28,8 @@ public class UnitTestMain {
 			//test0005_03(); // SCommon.tokenize
 			//test0005_04(); // SCommon.tokenize
 			//test0006_01(); // SCommon.merge
-			test0007_01(); // SCommon.Hex
+			//test0007_01(); // SCommon.Hex
+			test0008_01(); // SCommon.SimpleDateTime
 
 			// --
 		}
@@ -362,5 +365,27 @@ public class UnitTestMain {
 			}
 		}
 		System.out.println("OK! (TEST-0007-01)");
+	}
+
+	private static void test0008_01() {
+		System.out.println(SimpleDateTime.now().toDate());
+		System.out.println(toSimpleDateTimeString(SimpleDateTime.now().toCalendar()));
+		System.out.println(SimpleDateTime.now().toLocalDateTime());
+
+		System.out.println(new SimpleDateTime(SimpleDateTime.now().toDate()));
+		System.out.println(new SimpleDateTime(SimpleDateTime.now().toCalendar()));
+		System.out.println(new SimpleDateTime(SimpleDateTime.now().toLocalDateTime()));
+
+		System.out.println("done! (TEST-0008-01)");
+	}
+
+	private static String toSimpleDateTimeString(Calendar calendar) {
+		return String.format("%d/%02d/%02d %02d:%02d:%02d"
+				, calendar.get(Calendar.YEAR)
+				, calendar.get(Calendar.MONTH) + 1
+				, calendar.get(Calendar.DAY_OF_MONTH)
+				, calendar.get(Calendar.HOUR_OF_DAY)
+				, calendar.get(Calendar.MINUTE)
+				, calendar.get(Calendar.SECOND));
 	}
 }
