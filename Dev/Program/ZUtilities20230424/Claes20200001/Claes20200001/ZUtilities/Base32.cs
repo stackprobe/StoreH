@@ -247,10 +247,14 @@ namespace Charlotte.ZUtilities
 		private Part RemovePadding(Part encPart)
 		{
 			const int P_SZ_M = 6;
+			int c;
 
-			for (int c = 0; c < P_SZ_M && 1 <= encPart.Size; c++)
-				if (encPart.Bytes[encPart.Offset + encPart.Size - 1] == CHAR_PADDING)
-					encPart = new Part(encPart.Bytes, encPart.Offset, encPart.Size - 1);
+			for (c = 0; c < P_SZ_M && c < encPart.Size; c++)
+				if (encPart.Bytes[encPart.Offset + encPart.Size - c - 1] != CHAR_PADDING)
+					break;
+
+			if (1 <= c)
+				encPart = new Part(encPart.Bytes, encPart.Offset, encPart.Size - c);
 
 			return encPart;
 		}

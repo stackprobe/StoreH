@@ -21,8 +21,96 @@ namespace Charlotte.Tests
 
 				if (SCommon.Comp(enc1, enc2) != 0) // ? 不一致
 					throw null;
+
+				byte[] dec1 = SCommon.Join(Base32.I.Decode(new Base32.Part[] { new Base32.Part(enc1) }).ToArray());
+
+				if (SCommon.Comp(dec1, data) != 0) // ? 不一致
+					throw null;
 			}
 			Console.WriteLine("OK! (TEST-0001-01)");
+		}
+
+		public void Test02()
+		{
+			Test02_a(3000, 10, 3000);
+			Test02_a(1000, 30, 1000);
+			Test02_a(300, 100, 300);
+			Test02_a(100, 300, 100);
+			Test02_a(30, 1000, 30);
+			Test02_a(10, 3000, 10);
+
+			Test02_a(300, 10, 3000);
+			Test02_a(100, 30, 1000);
+			Test02_a(30, 100, 300);
+			Test02_a(10, 300, 100);
+
+			Test02_a(30, 10, 3000);
+			Test02_a(10, 30, 1000);
+
+			Console.WriteLine("OK! (TEST-0001-02)");
+		}
+
+		private void Test02_a(int dataScale, int divideScale, int testCount)
+		{
+			Console.WriteLine(string.Join(", ", "TEST-0001-02", dataScale, divideScale, testCount));
+
+			for (int testcnt = 0; testcnt < testCount; testcnt++)
+			{
+				byte[] data = SCommon.CRandom.GetBytes(SCommon.CRandom.GetInt(dataScale));
+
+				Base32.Part[] divData = TEST_Divide(data, divideScale);
+
+				byte[] enc1 = SCommon.Join(Base32.I.Encode(divData).ToArray());
+				byte[] enc2 = Encoding.ASCII.GetBytes(SCommon.Base32.I.Encode(data));
+
+				if (SCommon.Comp(enc1, enc2) != 0) // ? 不一致
+					throw null;
+
+				Base32.Part[] divEnc1 = TEST_Divide(enc1, divideScale);
+
+				byte[] dec1 = SCommon.Join(Base32.I.Decode(divEnc1).ToArray());
+
+				if (SCommon.Comp(dec1, data) != 0) // ? 不一致
+					throw null;
+			}
+			Console.WriteLine("OK");
+		}
+
+		private Base32.Part[] TEST_Divide(byte[] data, int divideScale)
+		{
+			int divCount = SCommon.CRandom.GetInt(divideScale);
+			byte[][] divs = new byte[][] { data };
+
+			for (int count = 0; count < divCount; count++)
+			{
+				int index = SCommon.CRandom.GetInt(divs.Length);
+				int divPos = SCommon.CRandom.GetInt(divs[index].Length + 1);
+
+				List<byte[]> divList = new List<byte[]>();
+
+				divList.AddRange(divs.Take(index));
+				divList.Add(SCommon.GetPart(divs[index], 0, divPos));
+				divList.Add(SCommon.GetPart(divs[index], divPos));
+				divList.AddRange(divs.Skip(index + 1));
+
+				divs = divList.ToArray();
+			}
+
+			return divs.Select(div =>
+			{
+				int a = SCommon.CRandom.GetInt(10);
+				int b = SCommon.CRandom.GetInt(10);
+
+				byte[] bytes = SCommon.Join(new byte[][]
+				{
+					SCommon.CRandom.GetBytes(a),
+					div,
+					SCommon.CRandom.GetBytes(b),
+				});
+
+				return new Base32.Part(bytes, a, div.Length);
+			})
+			.ToArray();
 		}
 	}
 }
