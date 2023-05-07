@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Charlotte.Commons;
 
-namespace Charlotte.Utilities0002
+namespace Charlotte.Utilities
 {
 	public class Base64
 	{

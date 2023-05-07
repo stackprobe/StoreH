@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using Charlotte.Commons;
-using Charlotte.Utilities0002;
+using Charlotte.Utilities;
 
 namespace Charlotte.Tests
 {
