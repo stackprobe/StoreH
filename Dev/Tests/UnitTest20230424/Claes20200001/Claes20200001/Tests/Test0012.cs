@@ -13,8 +13,8 @@ namespace Charlotte.Tests
 	{
 		public void Test01()
 		{
-			Console.WriteLine(SimpleDateTime.Now().ToDateTime());
-			Console.WriteLine(new SimpleDateTime(SimpleDateTime.Now().ToDateTime()));
+			Console.WriteLine(SCommon.SimpleDateTime.Now().ToDateTime());
+			Console.WriteLine(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.Now().ToDateTime()));
 
 			Console.WriteLine("done! (TEST-0012-01)");
 		}
