@@ -25,6 +25,9 @@ namespace Charlotte.Tests
 				if (str == null)
 					throw null;
 
+				if (str.Length % 4 != 0)
+					throw null;
+
 				if (!Regex.IsMatch(str, "^[A-Za-z0-9+/]*=*$"))
 					throw null;
 

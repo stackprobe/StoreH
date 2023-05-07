@@ -25,6 +25,9 @@ namespace Charlotte.Tests
 				if (str == null)
 					throw null;
 
+				if (str.Length % 8 != 0)
+					throw null;
+
 				if (!Regex.IsMatch(str, "^[A-Z2-7]*=*$"))
 					throw null;
 

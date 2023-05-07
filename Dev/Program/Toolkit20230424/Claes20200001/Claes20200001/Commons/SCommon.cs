@@ -2321,10 +2321,16 @@ namespace Charlotte.Commons
 					int strPadding = 8 - strOdd;
 					int dataOdd = (strOdd * 5) / 8;
 
+					string strFinalBlock =
+						str.Substring(str.Length - strOdd) +
+						new string(this.Chars[0], strPadding);
+
+					byte[] finalBlockData = DecodeEven(strFinalBlock, 8);
+
 					data = SCommon.Join(new byte[][]
 					{
 						DecodeEven(str, str.Length - strOdd),
-						SCommon.GetPart(DecodeEven(str.Substring(str.Length - strOdd) + new string(this.Chars[0], strPadding), 8), 0, dataOdd),
+						SCommon.GetPart(finalBlockData, 0, dataOdd),
 					});
 				}
 				return data;
