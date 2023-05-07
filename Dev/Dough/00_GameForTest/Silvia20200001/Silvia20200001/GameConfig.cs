@@ -21,7 +21,7 @@ namespace Charlotte
 			//@"General\Dummy.ttf",
 		};
 
-		public static Color LibbonBackColor = Color.DarkSlateGray;
+		public static Color LibbonBackColor = Color.Navy;
 		public static Color LibbonForeColor = Color.White;
 	}
 }

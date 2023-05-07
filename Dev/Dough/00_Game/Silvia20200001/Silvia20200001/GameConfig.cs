@@ -22,7 +22,7 @@ namespace Charlotte
 			@"General\Font\木漏れ日ゴシック\komorebi-gothic.ttf",
 		};
 
-		public static Color LibbonBackColor = Color.DarkSlateGray;
+		public static Color LibbonBackColor = Color.Navy;
 		public static Color LibbonForeColor = Color.White;
 	}
 }
