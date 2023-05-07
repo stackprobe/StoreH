@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Charlotte.Commons;
 
-namespace Charlotte.XUtilities
+namespace Charlotte.ZUtilities
 {
 	public class Base32
 	{
