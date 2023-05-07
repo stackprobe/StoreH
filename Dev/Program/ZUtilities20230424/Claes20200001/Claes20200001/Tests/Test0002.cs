@@ -8,7 +8,7 @@ using Charlotte.ZUtilities;
 
 namespace Charlotte.Tests
 {
-	public class Test0001
+	public class Test0002
 	{
 		public void Test01()
 		{
@@ -16,18 +16,18 @@ namespace Charlotte.Tests
 			{
 				byte[] data = SCommon.CRandom.GetBytes(SCommon.CRandom.GetInt(100));
 
-				byte[] enc1 = SCommon.Join(Base32.I.Encode(new Base32.Part[] { new Base32.Part(data) }).ToArray());
-				byte[] enc2 = Encoding.ASCII.GetBytes(SCommon.Base32.I.Encode(data));
+				byte[] enc1 = SCommon.Join(Base64.I.Encode(new Base64.Part[] { new Base64.Part(data) }).ToArray());
+				byte[] enc2 = Encoding.ASCII.GetBytes(SCommon.Base64.I.Encode(data));
 
 				if (SCommon.Comp(enc1, enc2) != 0) // ? 不一致
 					throw null;
 
-				byte[] dec1 = SCommon.Join(Base32.I.Decode(new Base32.Part[] { new Base32.Part(enc1) }).ToArray());
+				byte[] dec1 = SCommon.Join(Base64.I.Decode(new Base64.Part[] { new Base64.Part(enc1) }).ToArray());
 
 				if (SCommon.Comp(dec1, data) != 0) // ? 不一致
 					throw null;
 			}
-			Console.WriteLine("OK! (TEST-0001-01)");
+			Console.WriteLine("OK! (TEST-0002-01)");
 		}
 
 		public void Test02()
@@ -52,23 +52,23 @@ namespace Charlotte.Tests
 
 		private void Test02_a(int dataScale, int divideScale, int testCount)
 		{
-			Console.WriteLine(string.Join(", ", "TEST-0001-02", dataScale, divideScale, testCount));
+			Console.WriteLine(string.Join(", ", "TEST-0002-02", dataScale, divideScale, testCount));
 
 			for (int testcnt = 0; testcnt < testCount; testcnt++)
 			{
 				byte[] data = SCommon.CRandom.GetBytes(SCommon.CRandom.GetInt(dataScale));
 
-				Base32.Part[] divData = TEST_Divide(data, divideScale);
+				Base64.Part[] divData = TEST_Divide(data, divideScale);
 
-				byte[] enc1 = SCommon.Join(Base32.I.Encode(divData).ToArray());
-				byte[] enc2 = Encoding.ASCII.GetBytes(SCommon.Base32.I.Encode(data));
+				byte[] enc1 = SCommon.Join(Base64.I.Encode(divData).ToArray());
+				byte[] enc2 = Encoding.ASCII.GetBytes(SCommon.Base64.I.Encode(data));
 
 				if (SCommon.Comp(enc1, enc2) != 0) // ? 不一致
 					throw null;
 
-				Base32.Part[] divEnc1 = TEST_Divide(enc1, divideScale);
+				Base64.Part[] divEnc1 = TEST_Divide(enc1, divideScale);
 
-				byte[] dec1 = SCommon.Join(Base32.I.Decode(divEnc1).ToArray());
+				byte[] dec1 = SCommon.Join(Base64.I.Decode(divEnc1).ToArray());
 
 				if (SCommon.Comp(dec1, data) != 0) // ? 不一致
 					throw null;
@@ -76,7 +76,7 @@ namespace Charlotte.Tests
 			Console.WriteLine("OK");
 		}
 
-		private Base32.Part[] TEST_Divide(byte[] data, int divideScale)
+		private Base64.Part[] TEST_Divide(byte[] data, int divideScale)
 		{
 			int divCount = SCommon.CRandom.GetInt(divideScale);
 			byte[][] divs = new byte[][] { data };
@@ -108,7 +108,7 @@ namespace Charlotte.Tests
 					SCommon.CRandom.GetBytes(b),
 				});
 
-				return new Base32.Part(bytes, a, div.Length);
+				return new Base64.Part(bytes, a, div.Length);
 			})
 			.ToArray();
 		}

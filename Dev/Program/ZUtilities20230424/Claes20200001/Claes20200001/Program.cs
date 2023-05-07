@@ -55,7 +55,9 @@ namespace Charlotte
 			// -- choose one --
 
 			//new Test0001().Test01(); // Base32
-			new Test0001().Test02(); // Base32
+			//new Test0001().Test02(); // Base32
+			//new Test0002().Test01(); // Base64
+			new Test0002().Test02(); // Base64
 
 			// --
 		}
