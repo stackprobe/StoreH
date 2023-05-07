@@ -2216,7 +2216,7 @@ namespace Charlotte.Commons
 			private Base32()
 			{
 				this.Chars = (SCommon.ALPHA_UPPER + SCommon.DECIMAL.Substring(2, 6)).ToArray();
-				this.CharMap = new int[0x80];
+				this.CharMap = new int[CHAR_MAP_SIZE];
 
 				for (int index = 0; index < CHAR_MAP_SIZE; index++)
 					this.CharMap[index] = -1;
@@ -2227,56 +2227,44 @@ namespace Charlotte.Commons
 
 			public string EncodeNoPadding(byte[] data)
 			{
-				return EncodePadding(data, false);
+				return Encode(data).Replace(new string(new char[] { CHAR_PADDING }), "");
 			}
 
 			public string Encode(byte[] data)
 			{
-				return EncodePadding(data, true);
-			}
-
-			private string EncodePadding(byte[] data, bool padding)
-			{
 				if (data == null)
 					data = SCommon.EMPTY_BYTES;
 
-				StringBuilder buff = new StringBuilder((data.Length / 5 + 1) * 8);
+				string str;
 
 				if (data.Length % 5 == 0)
 				{
-					EncodeEven(buff, data, data.Length);
+					str = EncodeEven(data);
 				}
 				else
 				{
-					int dataOdd = data.Length % 5;
-					int dataPadding = 5 - dataOdd;
-					int strPadding = (dataPadding * 8) / 5;
-					int strOdd = 8 - strPadding;
+					int padding = ((5 - data.Length % 5) * 8) / 5;
 
-					EncodeEven(buff, data, data.Length - dataOdd);
-
-					byte[] finalBlockData = SCommon.Join(new byte[][]
+					data = SCommon.Join(new byte[][] 
 					{
-						SCommon.GetPart(data, data.Length - dataOdd, dataOdd),
-						Enumerable.Repeat((byte)0, dataPadding).ToArray(),
+						data,
+						Enumerable.Repeat((byte)0, 5 - data.Length % 5).ToArray(),
 					});
 
-					StringBuilder finalBlockBuff = new StringBuilder(8);
-
-					EncodeEven(finalBlockBuff, finalBlockData, 5);
-
-					buff.Append(finalBlockBuff.ToString(), 0, strOdd);
-					buff.Append(CHAR_PADDING, padding ? strPadding : 0);
+					str = EncodeEven(data);
+					str = str.Substring(0, str.Length - padding) + new string(CHAR_PADDING, padding);
 				}
-				return buff.ToString();
+				return str;
 			}
 
-			private void EncodeEven(StringBuilder buff, byte[] data, int length)
+			private string EncodeEven(byte[] data)
 			{
+				char[] buff = new char[(data.Length / 5) * 8];
 				int reader = 0;
+				int writer = 0;
 				ulong value;
 
-				while (reader < length)
+				while (reader < data.Length)
 				{
 					value = (ulong)data[reader++] << 32;
 					value |= (ulong)data[reader++] << 24;
@@ -2284,15 +2272,16 @@ namespace Charlotte.Commons
 					value |= (ulong)data[reader++] << 8;
 					value |= (ulong)data[reader++];
 
-					buff.Append(this.Chars[(value >> 35) & 0x1f]);
-					buff.Append(this.Chars[(value >> 30) & 0x1f]);
-					buff.Append(this.Chars[(value >> 25) & 0x1f]);
-					buff.Append(this.Chars[(value >> 20) & 0x1f]);
-					buff.Append(this.Chars[(value >> 15) & 0x1f]);
-					buff.Append(this.Chars[(value >> 10) & 0x1f]);
-					buff.Append(this.Chars[(value >> 5) & 0x1f]);
-					buff.Append(this.Chars[value & 0x1f]);
+					buff[writer++] = this.Chars[(value >> 35) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 30) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 25) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 20) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 15) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 10) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 5) & 0x1f];
+					buff[writer++] = this.Chars[value & 0x1f];
 				}
+				return new string(buff);
 			}
 
 			/// <summary>
@@ -2313,37 +2302,28 @@ namespace Charlotte.Commons
 
 				if (str.Length % 8 == 0)
 				{
-					data = DecodeEven(str, str.Length);
+					data = DecodeEven(str);
 				}
 				else
 				{
-					int strOdd = str.Length % 8;
-					int strPadding = 8 - strOdd;
-					int dataOdd = (strOdd * 5) / 8;
+					int padding = 5 - ((str.Length % 8) * 5) / 8;
 
-					string strFinalBlock =
-						str.Substring(str.Length - strOdd) +
-						new string(this.Chars[0], strPadding);
+					str += new string(this.Chars[0], 8 - str.Length % 8);
 
-					byte[] finalBlockData = DecodeEven(strFinalBlock, 8);
-
-					data = SCommon.Join(new byte[][]
-					{
-						DecodeEven(str, str.Length - strOdd),
-						SCommon.GetPart(finalBlockData, 0, dataOdd),
-					});
+					data = DecodeEven(str);
+					data = SCommon.GetPart(data, 0, data.Length - padding);
 				}
 				return data;
 			}
 
-			private byte[] DecodeEven(string str, int length)
+			private byte[] DecodeEven(string str)
 			{
-				byte[] data = new byte[(length / 8) * 5];
+				byte[] data = new byte[(str.Length / 8) * 5];
 				int reader = 0;
 				int writer = 0;
 				ulong value;
 
-				while (reader < length)
+				while (reader < str.Length)
 				{
 					value = (ulong)(uint)this.CharMap[(int)str[reader++]] << 35;
 					value |= (ulong)(uint)this.CharMap[(int)str[reader++]] << 30;
