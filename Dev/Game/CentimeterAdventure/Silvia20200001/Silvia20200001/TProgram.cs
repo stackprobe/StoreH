@@ -27,8 +27,8 @@ namespace Charlotte
 #if DEBUG
 			// -- choose one --
 
-			Logo.Run();
-			//TitleMenu.Run();
+			//Logo.Run();
+			TitleMenu.Run();
 			//Game.Run();
 
 			// --
