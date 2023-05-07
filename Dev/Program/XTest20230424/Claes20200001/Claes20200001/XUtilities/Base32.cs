@@ -8,6 +8,35 @@ namespace Charlotte.XUtilities
 {
 	public class Base32
 	{
+		public class Part
+		{
+			public readonly byte[] Bytes;
+			public readonly int Offset;
+			public readonly int Size;
+
+			public Part(byte[] bytes)
+				: this(bytes, 0)
+			{ }
+
+			public Part(byte[] bytes, int offset)
+				: this(bytes, offset, bytes.Length - offset)
+			{ }
+
+			public Part(byte[] bytes, int offset, int size)
+			{
+				if (
+					bytes == null ||
+					offset < 0 || bytes.Length < offset ||
+					size < 0 || bytes.Length - offset < size
+					)
+					throw new Exception("Bad params");
+
+				this.Bytes = bytes;
+				this.Offset = offset;
+				this.Size = size;
+			}
+		}
+
 		private static Base32 _i = null;
 
 		public static Base32 I
@@ -39,46 +68,69 @@ namespace Charlotte.XUtilities
 				this.CharMap[(int)this.Chars[index]] = index;
 		}
 
-		public byte[] Encode(byte[] src)
+		public IEnumerable<byte[]> Encode(IEnumerable<Part> src)
 		{
 			if (src == null)
-				src = SCommon.EMPTY_BYTES;
+				src = new Part[0];
 
-			byte[] dest = new byte[((src.Length + 4) / 5) * 8];
+			byte[] oddBlock = new byte[5];
+			int oddPartSize = 0;
 
-			if (src.Length % 5 == 0)
+			foreach (Part f_srcPart in src)
 			{
-				EncodeEven(src, 0, src.Length, dest, 0);
-			}
-			else
-			{
-				EncodeEven(src, 0, src.Length - src.Length % 5, dest, 0);
+				Part srcPart = f_srcPart;
 
-				byte[] finalBlock = SCommon.Join(new byte[][]
+				if (srcPart == null)
+					continue;
+
+				if (oddPartSize + srcPart.Size < 5)
 				{
-					SCommon.GetPart(src,src.Length - src.Length % 5),
-					Enumerable.Repeat((byte)0, 5 - src.Length % 5).ToArray(),
-				});
-
-				EncodeEven(finalBlock, 0, 5, dest, dest.Length - 8);
-
-				for (int index = dest.Length - ((5 - src.Length % 5) * 8) / 5; index < dest.Length; index++)
-					dest[index] = CHAR_PADDING;
+					Array.Copy(oddBlock, oddPartSize, srcPart.Bytes, srcPart.Offset, srcPart.Size);
+					oddPartSize += srcPart.Size;
+					continue;
+				}
+				if (1 <= oddPartSize)
+				{
+					int s = 5 - oddPartSize;
+					Array.Copy(srcPart.Bytes, srcPart.Offset, oddBlock, oddPartSize, s);
+					yield return EncodeEven(new Part(oddBlock, 0, 5));
+					oddPartSize = 0;
+					srcPart = new Part(srcPart.Bytes, srcPart.Offset + s, srcPart.Size - s);
+				}
+				if (srcPart.Size % 5 != 0)
+				{
+					oddPartSize = srcPart.Size % 5;
+					Array.Copy(srcPart.Bytes, srcPart.Offset + srcPart.Size - oddPartSize, oddBlock, 0, oddPartSize);
+					srcPart = new Part(srcPart.Bytes, srcPart.Offset, srcPart.Size - oddPartSize);
+				}
+				yield return EncodeEven(srcPart);
 			}
-			return dest;
+			if (1 <= oddPartSize)
+			{
+				Array.Clear(oddBlock, oddPartSize, 5 - oddPartSize);
+				byte[] odd = EncodeEven(new Part(oddBlock, 0, 5));
+
+				for (int index = 8 - ((5 - oddPartSize) * 8) / 5; index < 8; index++)
+					odd[index] = CHAR_PADDING;
+
+				yield return odd;
+			}
 		}
 
-		private void EncodeEven(byte[] src, int reader, int readerEnd, byte[] dest, int writer)
+		private byte[] EncodeEven(Part src)
 		{
+			byte[] dest = new byte[(src.Size / 5) * 8];
+			int reader = src.Offset;
+			int writer = 0;
 			ulong value;
 
-			while (reader < readerEnd)
+			while (reader < src.Offset + src.Size)
 			{
-				value = (ulong)src[reader++] << 32;
-				value |= (ulong)src[reader++] << 24;
-				value |= (ulong)src[reader++] << 16;
-				value |= (ulong)src[reader++] << 8;
-				value |= (ulong)src[reader++];
+				value = (ulong)src.Bytes[reader++] << 32;
+				value |= (ulong)src.Bytes[reader++] << 24;
+				value |= (ulong)src.Bytes[reader++] << 16;
+				value |= (ulong)src.Bytes[reader++] << 8;
+				value |= (ulong)src.Bytes[reader++];
 
 				dest[writer++] = this.Chars[(value >> 35) & 0x1f];
 				dest[writer++] = this.Chars[(value >> 30) & 0x1f];
@@ -89,68 +141,12 @@ namespace Charlotte.XUtilities
 				dest[writer++] = this.Chars[(value >> 5) & 0x1f];
 				dest[writer++] = this.Chars[value & 0x1f];
 			}
+			return dest;
 		}
 
-		public byte[] Decode(byte[] src)
+		public IEnumerable<byte[]> Decode(IEnumerable<byte[]> src)
 		{
-			return SCommon.Join(DecodeTwoBlock(src));
-		}
-
-		public byte[][] DecodeTwoBlock(byte[] src)
-		{
-			if (src == null)
-				src = SCommon.EMPTY_BYTES;
-
-			int size = src.Length;
-
-			while (1 <= size && src[size - 1] == CHAR_PADDING)
-				size--;
-
-			byte[] dest1 = new byte[(size / 8) * 5];
-			byte[] dest2 = new byte[0];
-
-			if (size % 8 == 0)
-			{
-				DecodeEven(src, 0, size, dest1, 0);
-			}
-			else
-			{
-				DecodeEven(src, 0, size - size % 8, dest1, 0);
-
-				byte[] finalBlock = SCommon.Join(new byte[][]
-				{
-					SCommon.GetPart(src, size - size % 8),
-					Enumerable.Repeat(this.Chars[0], 8 - size % 8).ToArray(),
-				});
-
-				dest2 = new byte[5];
-				DecodeEven(finalBlock, 0, 8, dest2, 0);
-				dest2 = SCommon.GetPart(dest2, 0, ((size % 8) * 5) / 8);
-			}
-			return new byte[][] { dest1, dest2 };
-		}
-
-		private void DecodeEven(byte[] src, int reader, int readerEnd, byte[] dest, int writer)
-		{
-			ulong value;
-
-			while (reader < readerEnd)
-			{
-				value = (ulong)(uint)this.CharMap[src[reader++]] << 35;
-				value |= (ulong)(uint)this.CharMap[src[reader++]] << 30;
-				value |= (ulong)(uint)this.CharMap[src[reader++]] << 25;
-				value |= (ulong)(uint)this.CharMap[src[reader++]] << 20;
-				value |= (ulong)(uint)this.CharMap[src[reader++]] << 15;
-				value |= (ulong)(uint)this.CharMap[src[reader++]] << 10;
-				value |= (ulong)(uint)this.CharMap[src[reader++]] << 5;
-				value |= (ulong)(uint)this.CharMap[src[reader++]];
-
-				dest[writer++] = (byte)((value >> 32) & 0xff);
-				dest[writer++] = (byte)((value >> 24) & 0xff);
-				dest[writer++] = (byte)((value >> 16) & 0xff);
-				dest[writer++] = (byte)((value >> 8) & 0xff);
-				dest[writer++] = (byte)(value & 0xff);
-			}
+			throw null; // TODO
 		}
 	}
 }
