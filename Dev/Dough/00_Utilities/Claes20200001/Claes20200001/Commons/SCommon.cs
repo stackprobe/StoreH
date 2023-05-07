@@ -2207,7 +2207,7 @@ namespace Charlotte.Commons
 				}
 			}
 
-			private const int CHAR_MAP_SIZE = (int)'Z' + 1;
+			private const int CHAR_MAP_SIZE = 0x80;
 			private const char CHAR_PADDING = '=';
 
 			private char[] Chars;
@@ -2363,7 +2363,7 @@ namespace Charlotte.Commons
 				}
 			}
 
-			private const int CHAR_MAP_SIZE = (int)'z' + 1;
+			private const int CHAR_MAP_SIZE = 0x80;
 			private const char CHAR_PADDING = '=';
 
 			private char[] Chars;

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
-using Charlotte.Commons;
 using System.IO;
 using System.IO.Compression;
+using Charlotte.Commons;
 
 namespace Charlotte.Tests
 {
