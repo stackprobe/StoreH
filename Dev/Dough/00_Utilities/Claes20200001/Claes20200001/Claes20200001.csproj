@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="Commons\ArgsReader.cs" />
+    <Compile Include="Commons\SimpleDateTime.cs" />
     <Compile Include="Drawings\D2Point.cs" />
     <Compile Include="Drawings\D2Size.cs" />
     <Compile Include="Drawings\D3Color.cs" />

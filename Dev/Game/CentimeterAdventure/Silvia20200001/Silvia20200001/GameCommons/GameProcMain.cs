@@ -180,7 +180,7 @@ namespace Charlotte.GameCommons
 				+ GUIProcMain.BuiltDateTime.ToString("yyyy-MM-dd-HH-mm-ss");
 
 			DD.TargetMonitor = DU.GetTargetMonitor_Boot();
-			DD.SetLibbon("ゲームを起動しています...");
+			DD.SetLibbon("アプリケーションを起動しています...");
 
 			Icon icon;
 

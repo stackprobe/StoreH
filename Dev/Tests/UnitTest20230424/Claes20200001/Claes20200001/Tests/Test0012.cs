@@ -7,14 +7,14 @@ using Charlotte.Commons;
 namespace Charlotte.Tests
 {
 	/// <summary>
-	/// SCommon.SimpleDateTime テスト
+	/// SimpleDateTime テスト
 	/// </summary>
 	public class Test0012
 	{
 		public void Test01()
 		{
-			Console.WriteLine(SCommon.SimpleDateTime.Now().ToDateTime());
-			Console.WriteLine(new SCommon.SimpleDateTime(SCommon.SimpleDateTime.Now().ToDateTime()));
+			Console.WriteLine(SimpleDateTime.Now().ToDateTime());
+			Console.WriteLine(new SimpleDateTime(SimpleDateTime.Now().ToDateTime()));
 
 			Console.WriteLine("done! (TEST-0012-01)");
 		}

@@ -502,7 +502,7 @@ namespace Charlotte.GameCommons
 				return;
 
 			DD.TargetMonitor = DU.GetTargetMonitor();
-			DD.SetLibbon("ゲーム画面のサイズと位置を調整しています...");
+			DD.SetLibbon("ウィンドウのサイズと位置を調整しています...");
 
 			GameProcMain.SetRealScreenSize(w, h);
 
