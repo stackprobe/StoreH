@@ -429,8 +429,6 @@ namespace Charlotte.Commons
 		public static double ToRange(double value, double minval, double maxval)
 		{
 			CheckNaN(value);
-			//CheckNaN(minval);
-			//CheckNaN(maxval);
 
 			return Math.Max(minval, Math.Min(maxval, value));
 		}
@@ -438,8 +436,6 @@ namespace Charlotte.Commons
 		public static bool IsRange(double value, double minval, double maxval)
 		{
 			CheckNaN(value);
-			//CheckNaN(minval);
-			//CheckNaN(maxval);
 
 			return minval <= value && value <= maxval;
 		}
@@ -1189,6 +1185,8 @@ namespace Charlotte.Commons
 			try
 			{
 				double value = double.Parse(str);
+
+				CheckNaN(value);
 
 				if (value < minval || maxval < value)
 					throw new Exception("Value out of range");
