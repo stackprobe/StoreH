@@ -3987,6 +3987,9 @@ C:\Factory\DevTools\chkuuidcoll.c(350) : DispAllCollisionInterProject // ŠÖ”
 C:\Factory\DevTools\chkuuidcoll.c(367) : DispAllCollision // ŠÖ”
 C:\Factory\DevTools\chkuuidcoll.c(385) : main // ŠÖ”
 C:\Factory\DevTools\chkuuidcoll.c(27) : UUID_t // Œ^éŒ¾
+C:\Factory\DevTools\collout.c(7) : IsReleasedFile // ŠÖ”
+C:\Factory\DevTools\collout.c(25) : CollectOut // ŠÖ”
+C:\Factory\DevTools\collout.c(47) : main // ŠÖ”
 C:\Factory\DevTools\Count.c(11) : CountLineFromStdin // ŠÖ”
 C:\Factory\DevTools\Count.c(39) : GetCountLines_x // ŠÖ”
 C:\Factory\DevTools\Count.c(46) : DispCount // ŠÖ”
@@ -4110,7 +4113,7 @@ C:\Factory\DevTools\lss.c(10) : NoParentMode // •Ï”–”‚ÍéŒ¾
 C:\Factory\DevTools\lss.c(12) : DispList // ŠÖ”
 C:\Factory\DevTools\lss.c(90) : main // ŠÖ”
 C:\Factory\DevTools\lssColl.c(16) : Collect // ŠÖ”
-C:\Factory\DevTools\lssColl.c(46) : main // ŠÖ”
+C:\Factory\DevTools\lssColl.c(47) : main // ŠÖ”
 C:\Factory\DevTools\lssExt.c(11) : main // ŠÖ”
 C:\Factory\DevTools\lssImg.c(16) : main // ŠÖ”
 C:\Factory\DevTools\lssLocal.c(11) : main // ŠÖ”

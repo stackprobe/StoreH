@@ -40,6 +40,7 @@ static void Collect(int keepHierarchy)
 		copyPath(path, outPath);
 		memFree(outPath);
 	}
+	releaseDim(paths, 1);
 	execute_x(xcout("START %s", outDir));
 	memFree(outDir);
 }
