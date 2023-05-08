@@ -83,7 +83,8 @@ namespace Charlotte
 			//new Test0010().Test03(); // SCommon.Tokenize
 			//new Test0010().Test04(); // SCommon.Tokenize
 			//new Test0011().Test01(); // SCommon.Generate
-			new Test0012().Test01(); // SCommon.SimpleDateTime
+			//new Test0012().Test01(); // SCommon.SimpleDateTime
+			new Test0013().Test01(); // SCommon.GetSJISBytes
 
 			// --
 		}

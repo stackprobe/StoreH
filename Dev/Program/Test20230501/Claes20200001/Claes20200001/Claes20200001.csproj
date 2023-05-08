@@ -69,6 +69,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Tests\Test0002.cs" />
     <Compile Include="Tests\Test0003.cs" />
+    <Compile Include="Tests\Test0004.cs" />
     <Compile Include="Utilities\Canvas.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

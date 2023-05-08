@@ -1224,13 +1224,11 @@ namespace Charlotte.Commons
 
 		public static byte[] GetSJISBytes(string str)
 		{
-			byte[][] unicode2SJIS = P_GetUnicode2SJIS();
-
 			using (MemoryStream dest = new MemoryStream())
 			{
 				foreach (char chr in str)
 				{
-					byte[] chrSJIS = unicode2SJIS[(int)chr];
+					byte[] chrSJIS = P_Unicode2SJIS.GetUnicode2SJIS()[(int)chr];
 
 					if (chrSJIS == null)
 						chrSJIS = new byte[] { 0x3f }; // '?'
@@ -1241,53 +1239,60 @@ namespace Charlotte.Commons
 			}
 		}
 
-		private static byte[][] P_Unicode2SJIS = null;
-
-		private static byte[][] P_GetUnicode2SJIS()
+		private static class P_Unicode2SJIS
 		{
-			if (P_Unicode2SJIS == null)
-				P_Unicode2SJIS = P_GetUnicode2SJIS_Main();
+			private static byte[][] Unicode2SJIS = null;
 
-			return P_Unicode2SJIS;
-		}
-
-		private static byte[][] P_GetUnicode2SJIS_Main()
-		{
-			byte[][] dest = new byte[0x10000][];
-
-			for (byte bChr = 0x00; bChr <= 0x7e; bChr++) // 制御コード + アスキー文字
+			public static byte[][] GetUnicode2SJIS()
 			{
-				dest[(int)bChr] = new byte[] { bChr };
-			}
-			for (byte bChr = 0xa1; bChr <= 0xdf; bChr++) // 半角カナ
-			{
-				dest[SJISHanKanaToUnicodeHanKana((int)bChr)] = new byte[] { bChr };
+				if (Unicode2SJIS == null)
+					Unicode2SJIS = GetUnicode2SJIS_Main();
+
+				return Unicode2SJIS;
 			}
 
-			// 全角文字
+			private static byte[][] GetUnicode2SJIS_Main()
 			{
-				char[] unicodes = GetJChars().ToArray();
+				byte[][] dest = new byte[0x10000][];
 
-				if (unicodes.Length * 2 != GetJCharBytes().Count()) // ? 文字数が合わない。-- サロゲートペアは無いはず！
-					throw null; // never
+				dest[0x09] = new byte[] { 0x09 }; // HT
+				dest[0x0a] = new byte[] { 0x0a }; // LF
+				dest[0x0d] = new byte[] { 0x0d }; // CR
 
-				foreach (char unicode in unicodes)
+				for (int bChr = 0x20; bChr <= 0x7e; bChr++) // アスキー文字
 				{
-					byte[] bJChr = ENCODING_SJIS.GetBytes(new string(new char[] { unicode }));
+					dest[bChr] = new byte[] { (byte)bChr };
+				}
+				for (int bChr = 0xa1; bChr <= 0xdf; bChr++) // 半角カナ
+				{
+					dest[SJISHanKanaToUnicodeHanKana(bChr)] = new byte[] { (byte)bChr };
+				}
 
-					if (bJChr.Length != 2) // ? 全角文字じゃない。
+				// 全角文字
+				{
+					char[] unicodes = GetJChars().ToArray();
+
+					if (unicodes.Length * 2 != GetJCharBytes().Count()) // ? 文字数が合わない。-- サロゲートペアは無いはず！
 						throw null; // never
 
-					dest[(int)unicode] = bJChr;
+					foreach (char unicode in unicodes)
+					{
+						byte[] bJChr = ENCODING_SJIS.GetBytes(new string(new char[] { unicode }));
+
+						if (bJChr.Length != 2) // ? 全角文字じゃない。
+							throw null; // never
+
+						dest[(int)unicode] = bJChr;
+					}
 				}
+
+				return dest;
 			}
 
-			return dest;
-		}
-
-		private static int SJISHanKanaToUnicodeHanKana(int chr)
-		{
-			return chr + 0xfec0;
+			private static int SJISHanKanaToUnicodeHanKana(int chr)
+			{
+				return chr + 0xfec0;
+			}
 		}
 
 		#endregion
