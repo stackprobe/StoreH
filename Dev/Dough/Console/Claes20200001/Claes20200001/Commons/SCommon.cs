@@ -2626,7 +2626,7 @@ namespace Charlotte.Commons
 		/// <summary>
 		/// 日時の範囲：1/1/1 00:00:00 ～ 922337203/12/31 23:59:59
 		/// </summary>
-		public class SimpleDateTime
+		public struct SimpleDateTime
 		{
 			public readonly int Year;
 			public readonly int Month;
