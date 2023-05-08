@@ -34,7 +34,7 @@ public class RandomUnit {
 		return returnValue;
 	}
 
-	public int getPositiveInt() {
+	public int getInt31() {
 		return getInt32() & 0x7fffffff;
 	}
 
@@ -64,7 +64,7 @@ public class RandomUnit {
 		return returnValue;
 	}
 
-	public long getPositiveLong() {
+	public long getLong63() {
 		return getLong64() & 0x7fffffffffffffffL;
 	}
 
@@ -72,14 +72,14 @@ public class RandomUnit {
 		if (modulo < 1) {
 			throw new Error("Bad modulo");
 		}
-		return getPositiveLong() % modulo;
+		return getLong63() % modulo;
 	}
 
 	public int getInt(int modulo) {
 		if (modulo < 1) {
 			throw new Error("Bad modulo");
 		}
-		return (int)(getPositiveLong() % (long)modulo);
+		return (int)(getLong63() % (long)modulo);
 	}
 
 	public int getRange(int minval, int maxval) {
@@ -87,11 +87,11 @@ public class RandomUnit {
 	}
 
 	public boolean getBoolean() {
-		return getInt(2) == 1;
+		return (getByte() & 1) != 0;
 	}
 
 	public int getSign() {
-		return getInt(2) * 2 - 1;
+		return (getByte() & 1) * 2 - 1;
 	}
 
 	public double getRate() {

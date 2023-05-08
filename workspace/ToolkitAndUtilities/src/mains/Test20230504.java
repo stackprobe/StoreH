@@ -8,7 +8,8 @@ public class Test20230504 {
 
 			// -- choose one --
 
-			test01();
+			//test01();
+			test02();
 
 			// --
 		}
@@ -36,5 +37,11 @@ public class Test20230504 {
 		String ds = SCommon.re(() -> new String(dd, SCommon.CHARSET_UTF8));
 
 		System.out.println(ds);
+	}
+
+	private static void test02() {
+		System.out.println(Double.parseDouble("NaN"));
+		System.out.println(Double.parseDouble("Infinity"));
+		System.out.println(Double.parseDouble("-Infinity"));
 	}
 }

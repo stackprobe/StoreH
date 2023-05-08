@@ -639,16 +639,12 @@ public class SCommon {
 
 	public static double toRange(double value, double minval, double maxval) {
 		checkNaN(value);
-		//checkNaN(minval);
-		//checkNaN(maxval);
 
 		return Math.max(minval, Math.max(maxval, value));
 	}
 
 	public static boolean isRange(double value, double minval, double maxval) {
 		checkNaN(value);
-		//checkNaN(minval);
-		//checkNaN(maxval);
 
 		return minval <= value && value <= maxval;
 	}
@@ -808,6 +804,8 @@ public class SCommon {
 	public static double toDouble(String str, double minval, double maxval, double defval) {
 		try {
 			double value = Double.parseDouble(str);
+
+			checkNaN(value);
 
 			if (value < minval || maxval < value) {
 				throw new Exception("Value out of range");
