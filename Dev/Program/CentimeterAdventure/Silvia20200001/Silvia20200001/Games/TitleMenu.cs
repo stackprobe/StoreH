@@ -36,12 +36,6 @@ namespace Charlotte.Games
 
 				DD.SetZoom(z);
 				DD.Draw(Pictures.KAZUKIcghvbnkm, new I2Point(GameConfig.ScreenSize.W / 2, GameConfig.ScreenSize.H / 2).ToD2Point());
-
-				DD.SetPrint(650, 210, 70, "Impact", 60);
-				DD.SetPrintColor(new I3Color(0, 0, 0));
-				DD.SetPrintBorder(new I3Color(255, 230, 210), 2);
-				DD.PrintLine("Centimeter");
-				DD.PrintLine("/Adventure");
 			};
 
 			SimpleMenu menu = new SimpleMenu(40, 40, 40, 440, null, new string[]

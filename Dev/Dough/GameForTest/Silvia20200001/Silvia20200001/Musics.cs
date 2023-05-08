@@ -8,6 +8,6 @@ namespace Charlotte
 {
 	public static class Musics
 	{
-		public static Music Dummy = new Music(@"General\muon10s.mp3");
+		public static Music Dummy = new Music(@"Handmade\muon10s.mp3");
 	}
 }

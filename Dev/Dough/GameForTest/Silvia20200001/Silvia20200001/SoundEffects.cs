@@ -8,6 +8,6 @@ namespace Charlotte
 {
 	public static class SoundEffects
 	{
-		public static SoundEffect Dummy = new SoundEffect(@"General\muon1s.wav");
+		public static SoundEffect Dummy = new SoundEffect(@"Handmade\muon1s.wav");
 	}
 }
