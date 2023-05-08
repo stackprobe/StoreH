@@ -56,7 +56,42 @@ namespace Charlotte.Tests
 			if (SCommon.Comp(data2, data3) != 0) // ? 不一致
 				throw null;
 
-			// 8790～879c, ed40～eefc, fa4a～fa54, fa58～fa5b のみ不可逆ということみたい。
+			// 上記「不一致箇所」のSJISの文字のみ不可逆となるっぽい。
+		}
+
+		public void Test02()
+		{
+			int[] chrSJISs = SCommon.GetJCharCodes().Select(chr => (int)chr).ToArray();
+			int[] chrSJISs_R = chrSJISs.Where(chr => !IsIrreversibleChar(chr)).ToArray(); // reversible
+			int[] chrSJISs_IR = chrSJISs.Where(chr => IsIrreversibleChar(chr)).ToArray(); // inreversible
+
+			int[] unicodes_R = chrSJISs_R.Select(chr =>
+				(int)SCommon.ENCODING_SJIS.GetString(new byte[] { (byte)(chr >> 8), (byte)(chr & 0xff) })[0]).ToArray();
+			int[] unicodes_IR = chrSJISs_IR.Select(chr =>
+				(int)SCommon.ENCODING_SJIS.GetString(new byte[] { (byte)(chr >> 8), (byte)(chr & 0xff) })[0]).ToArray();
+
+			foreach (int unicode_IR in unicodes_IR)
+				if (!unicodes_R.Contains(unicode_IR))
+					throw null;
+
+			// SJIS_IR, SJIS_R 共に Unicode に変換した時点で Unicode_R に含まれるっぽい。
+		}
+
+		private bool IsIrreversibleChar(int chrSJIS)
+		{
+			return
+				0x8790 == chrSJIS ||
+				0x8791 == chrSJIS ||
+				0x8792 == chrSJIS ||
+				0x8795 == chrSJIS ||
+				0x8796 == chrSJIS ||
+				0x8797 == chrSJIS ||
+				0x879a == chrSJIS ||
+				0x879b == chrSJIS ||
+				0x879c == chrSJIS ||
+				(0xed40 <= chrSJIS && chrSJIS <= 0xeefc) ||
+				(0xfa4a <= chrSJIS && chrSJIS <= 0xfa54) ||
+				(0xfa58 <= chrSJIS && chrSJIS <= 0xfa5b);
 		}
 	}
 }
