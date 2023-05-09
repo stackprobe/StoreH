@@ -429,8 +429,6 @@ namespace Charlotte.Commons
 		public static double ToRange(double value, double minval, double maxval)
 		{
 			CheckNaN(value);
-			//CheckNaN(minval);
-			//CheckNaN(maxval);
 
 			return Math.Max(minval, Math.Min(maxval, value));
 		}
@@ -438,8 +436,6 @@ namespace Charlotte.Commons
 		public static bool IsRange(double value, double minval, double maxval)
 		{
 			CheckNaN(value);
-			//CheckNaN(minval);
-			//CheckNaN(maxval);
 
 			return minval <= value && value <= maxval;
 		}
@@ -1190,6 +1186,8 @@ namespace Charlotte.Commons
 			{
 				double value = double.Parse(str);
 
+				CheckNaN(value);
+
 				if (value < minval || maxval < value)
 					throw new Exception("Value out of range");
 
@@ -1224,13 +1222,11 @@ namespace Charlotte.Commons
 
 		public static byte[] GetSJISBytes(string str)
 		{
-			byte[][] unicode2SJIS = P_GetUnicode2SJIS();
-
 			using (MemoryStream dest = new MemoryStream())
 			{
 				foreach (char chr in str)
 				{
-					byte[] chrSJIS = unicode2SJIS[(int)chr];
+					byte[] chrSJIS = P_Unicode2SJIS.GetUnicode2SJIS()[(int)chr];
 
 					if (chrSJIS == null)
 						chrSJIS = new byte[] { 0x3f }; // '?'
@@ -1241,53 +1237,60 @@ namespace Charlotte.Commons
 			}
 		}
 
-		private static byte[][] P_Unicode2SJIS = null;
-
-		private static byte[][] P_GetUnicode2SJIS()
+		private static class P_Unicode2SJIS
 		{
-			if (P_Unicode2SJIS == null)
-				P_Unicode2SJIS = P_GetUnicode2SJIS_Main();
+			private static byte[][] Unicode2SJIS = null;
 
-			return P_Unicode2SJIS;
-		}
-
-		private static byte[][] P_GetUnicode2SJIS_Main()
-		{
-			byte[][] dest = new byte[0x10000][];
-
-			for (byte bChr = 0x00; bChr <= 0x7e; bChr++) // 制御コード + アスキー文字
+			public static byte[][] GetUnicode2SJIS()
 			{
-				dest[(int)bChr] = new byte[] { bChr };
-			}
-			for (byte bChr = 0xa1; bChr <= 0xdf; bChr++) // 半角カナ
-			{
-				dest[SJISHanKanaToUnicodeHanKana((int)bChr)] = new byte[] { bChr };
+				if (Unicode2SJIS == null)
+					Unicode2SJIS = GetUnicode2SJIS_Main();
+
+				return Unicode2SJIS;
 			}
 
-			// 全角文字
+			private static byte[][] GetUnicode2SJIS_Main()
 			{
-				char[] unicodes = GetJChars().ToArray();
+				byte[][] dest = new byte[0x10000][];
 
-				if (unicodes.Length * 2 != GetJCharBytes().Count()) // ? 文字数が合わない。-- サロゲートペアは無いはず！
-					throw null; // never
+				dest[0x09] = new byte[] { 0x09 }; // HT
+				dest[0x0a] = new byte[] { 0x0a }; // LF
+				dest[0x0d] = new byte[] { 0x0d }; // CR
 
-				foreach (char unicode in unicodes)
+				for (int bChr = 0x20; bChr <= 0x7e; bChr++) // アスキー文字
 				{
-					byte[] bJChr = ENCODING_SJIS.GetBytes(new string(new char[] { unicode }));
+					dest[bChr] = new byte[] { (byte)bChr };
+				}
+				for (int bChr = 0xa1; bChr <= 0xdf; bChr++) // 半角カナ
+				{
+					dest[SJISHanKanaToUnicodeHanKana(bChr)] = new byte[] { (byte)bChr };
+				}
 
-					if (bJChr.Length != 2) // ? 全角文字じゃない。
+				// 全角文字
+				{
+					char[] unicodes = GetJChars().ToArray();
+
+					if (unicodes.Length * 2 != GetJCharBytes().Count()) // ? 文字数が合わない。-- サロゲートペアは無いはず！
 						throw null; // never
 
-					dest[(int)unicode] = bJChr;
+					foreach (char unicode in unicodes)
+					{
+						byte[] bJChr = ENCODING_SJIS.GetBytes(new string(new char[] { unicode }));
+
+						if (bJChr.Length != 2) // ? 全角文字じゃない。
+							throw null; // never
+
+						dest[(int)unicode] = bJChr;
+					}
 				}
+
+				return dest;
 			}
 
-			return dest;
-		}
-
-		private static int SJISHanKanaToUnicodeHanKana(int chr)
-		{
-			return chr + 0xfec0;
+			private static int SJISHanKanaToUnicodeHanKana(int chr)
+			{
+				return chr + 0xfec0;
+			}
 		}
 
 		#endregion
@@ -2216,7 +2219,7 @@ namespace Charlotte.Commons
 			private Base32()
 			{
 				this.Chars = (SCommon.ALPHA_UPPER + SCommon.DECIMAL.Substring(2, 6)).ToArray();
-				this.CharMap = new int[0x80];
+				this.CharMap = new int[CHAR_MAP_SIZE];
 
 				for (int index = 0; index < CHAR_MAP_SIZE; index++)
 					this.CharMap[index] = -1;
@@ -2259,28 +2262,29 @@ namespace Charlotte.Commons
 
 			private string EncodeEven(byte[] data)
 			{
-				StringBuilder buff = new StringBuilder((data.Length / 5) * 8);
-				int index = 0;
+				char[] buff = new char[(data.Length / 5) * 8];
+				int reader = 0;
+				int writer = 0;
 				ulong value;
 
-				while (index < data.Length)
+				while (reader < data.Length)
 				{
-					value = (ulong)data[index++] << 32;
-					value |= (ulong)data[index++] << 24;
-					value |= (ulong)data[index++] << 16;
-					value |= (ulong)data[index++] << 8;
-					value |= (ulong)data[index++];
+					value = (ulong)data[reader++] << 32;
+					value |= (ulong)data[reader++] << 24;
+					value |= (ulong)data[reader++] << 16;
+					value |= (ulong)data[reader++] << 8;
+					value |= (ulong)data[reader++];
 
-					buff.Append(this.Chars[(value >> 35) & 0x1f]);
-					buff.Append(this.Chars[(value >> 30) & 0x1f]);
-					buff.Append(this.Chars[(value >> 25) & 0x1f]);
-					buff.Append(this.Chars[(value >> 20) & 0x1f]);
-					buff.Append(this.Chars[(value >> 15) & 0x1f]);
-					buff.Append(this.Chars[(value >> 10) & 0x1f]);
-					buff.Append(this.Chars[(value >> 5) & 0x1f]);
-					buff.Append(this.Chars[value & 0x1f]);
+					buff[writer++] = this.Chars[(value >> 35) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 30) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 25) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 20) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 15) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 10) & 0x1f];
+					buff[writer++] = this.Chars[(value >> 5) & 0x1f];
+					buff[writer++] = this.Chars[value & 0x1f];
 				}
-				return buff.ToString();
+				return new string(buff);
 			}
 
 			/// <summary>
@@ -2305,8 +2309,12 @@ namespace Charlotte.Commons
 				}
 				else
 				{
-					data = DecodeEven(str + new string(this.Chars[0], 8 - str.Length % 8));
-					data = SCommon.GetPart(data, 0, data.Length - 5 + ((str.Length % 8) * 5) / 8);
+					int padding = 5 - ((str.Length % 8) * 5) / 8;
+
+					str += new string(this.Chars[0], 8 - str.Length % 8);
+
+					data = DecodeEven(str);
+					data = SCommon.GetPart(data, 0, data.Length - padding);
 				}
 				return data;
 			}
@@ -2467,18 +2475,18 @@ namespace Charlotte.Commons
 			public static long ToSec(long timeStamp)
 			{
 				if (timeStamp < TIME_STAMP_MIN || TIME_STAMP_MAX < timeStamp)
-					return 0L;
+					return 0;
 
-				int s = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int i = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int h = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int d = (int)(timeStamp % 100L);
-				timeStamp /= 100L;
-				int m = (int)(timeStamp % 100L);
-				int y = (int)(timeStamp / 100L);
+				int s = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int i = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int h = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int d = (int)(timeStamp % 100);
+				timeStamp /= 100;
+				int m = (int)(timeStamp % 100);
+				int y = (int)(timeStamp / 100);
 
 				if (
 					//y < YEAR_MIN || YEAR_MAX < y ||
@@ -2488,7 +2496,7 @@ namespace Charlotte.Commons
 					i < 0 || 59 < i ||
 					s < 0 || 59 < s
 					)
-					return 0L;
+					return 0;
 
 				if (m <= 2)
 					y--;
@@ -2529,15 +2537,15 @@ namespace Charlotte.Commons
 
 			public static long ToTimeStamp(long sec)
 			{
-				if (sec < 0L)
+				if (sec < 0)
 					return TIME_STAMP_MIN;
 
-				int s = (int)(sec % 60L);
-				sec /= 60L;
-				int i = (int)(sec % 60L);
-				sec /= 60L;
-				int h = (int)(sec % 24L);
-				sec /= 24L;
+				int s = (int)(sec % 60);
+				sec /= 60;
+				int i = (int)(sec % 60);
+				sec /= 60;
+				int h = (int)(sec % 24);
+				sec /= 24;
 
 				int day = (int)(sec % 146097);
 				sec /= 146097;
@@ -2641,27 +2649,32 @@ namespace Charlotte.Commons
 				return new SimpleDateTime(TimeStampToSec.ToSec(timeStamp));
 			}
 
+			public static SimpleDateTime FromSec(long sec)
+			{
+				return new SimpleDateTime(sec);
+			}
+
 			public SimpleDateTime(DateTime dateTime)
 				: this(TimeStampToSec.ToSec(dateTime))
 			{ }
 
-			public SimpleDateTime(long sec)
+			private SimpleDateTime(long sec)
 			{
 				long timeStamp = TimeStampToSec.ToTimeStamp(sec);
 				long t = timeStamp;
 
-				this.Second = (int)(t % 100L);
-				t /= 100L;
-				this.Minute = (int)(t % 100L);
-				t /= 100L;
-				this.Hour = (int)(t % 100L);
-				t /= 100L;
-				this.Day = (int)(t % 100L);
-				t /= 100L;
-				this.Month = (int)(t % 100L);
-				this.Year = (int)(t / 100L);
+				this.Second = (int)(t % 100);
+				t /= 100;
+				this.Minute = (int)(t % 100);
+				t /= 100;
+				this.Hour = (int)(t % 100);
+				t /= 100;
+				this.Day = (int)(t % 100);
+				t /= 100;
+				this.Month = (int)(t % 100);
+				this.Year = (int)(t / 100);
 
-				this.Weekday = new string(new char[] { "月火水木金土日"[(int)(TimeStampToSec.ToSec(timeStamp) / 86400 % 7)] });
+				this.Weekday = new string(new char[] { "月火水木金土日"[(int)((TimeStampToSec.ToSec(timeStamp) / 86400) % 7)] });
 			}
 
 			public override string ToString()
