@@ -38,7 +38,7 @@ namespace Charlotte
 #if DEBUG
 			// -- choose one --
 
-			Main4(new ArgsReader(new string[] { "E" }));
+			Main4(new ArgsReader(new string[] { "H" }));
 			//new Test0001().Test01();
 			//new Test0002().Test01();
 			//new Test0003().Test01();
@@ -336,10 +336,15 @@ namespace Charlotte
 				{
 					FileInfo info = new FileInfo(path);
 
+					string hash = SCommon.Base32.I.Encode(SCommon.GetPart(
+						SCommon.GetSHA512(SCommon.ENCODING_SJIS.GetBytes("ファイル更新日時 " + new SCommon.SimpleDateTime(info.LastWriteTime)))
+						, 0
+						, 20
+						));
+
 					dest.Add(string.Format(
-						"\t-> File {0} / {1} / {2:#,0}"
-						, new SCommon.SimpleDateTime(info.CreationTime)
-						, new SCommon.SimpleDateTime(info.LastWriteTime)
+						"\t-> File / {0} / {1:#,0}"
+						, hash
 						, info.Length
 						));
 				}
