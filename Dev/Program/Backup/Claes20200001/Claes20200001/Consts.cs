@@ -34,7 +34,6 @@ namespace Charlotte
 			"Program Files",
 			"Program Files (x86)",
 			"ProgramData",
-			"Programs", // 常駐系プログラムの格納場所(個人的に作成)
 			"Recovery",
 			"RECYCLER",
 			"System Volume Information",
@@ -42,6 +41,13 @@ namespace Charlotte
 			"Windows",
 			"Windows.old",
 			"WINNT",
+
+			// ----
+			// バックアップ除外フォルダ(個人的に作成)
+
+			"Ignore",
+
+			// ----
 		};
 
 		/// <summary>
