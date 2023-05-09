@@ -53,7 +53,7 @@ namespace Charlotte.Tests
 		{
 			foreach (string file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
 			{
-				Console.WriteLine(SCommon.Hex.I.ToString(SCommon.GetSHA512File(file)) + " " + file);
+				Console.WriteLine(SCommon.Hex.I.GetString(SCommon.GetSHA512File(file)) + " " + file);
 			}
 		}
 	}

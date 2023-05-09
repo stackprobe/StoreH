@@ -216,8 +216,8 @@ namespace Charlotte.Tests
 			byte[] gzData = SCommon.Compress(data);
 			string gzStr = SCommon.Base64.I.Encode(gzData);
 
-			Console.WriteLine(SCommon.Hex.I.ToString(data));
-			Console.WriteLine(SCommon.Hex.I.ToString(gzData));
+			Console.WriteLine(SCommon.Hex.I.GetString(data));
+			Console.WriteLine(SCommon.Hex.I.GetString(gzData));
 			Console.WriteLine(gzStr);
 
 			// ----

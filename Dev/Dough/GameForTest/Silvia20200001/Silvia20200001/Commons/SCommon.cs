@@ -1665,7 +1665,7 @@ namespace Charlotte.Commons
 
 			private Regex RegexHexString = new Regex("^([0-9A-Fa-f]{2})*$");
 
-			public string ToString(byte[] src)
+			public string GetString(byte[] src)
 			{
 				if (src == null)
 					throw new Exception("不正な入力バイト列");
@@ -1680,7 +1680,7 @@ namespace Charlotte.Commons
 				return buff.ToString();
 			}
 
-			public byte[] ToBytes(string src)
+			public byte[] GetBytes(string src)
 			{
 				if (
 					src == null ||

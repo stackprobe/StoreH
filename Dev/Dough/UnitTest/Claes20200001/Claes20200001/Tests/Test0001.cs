@@ -83,7 +83,7 @@ namespace Charlotte.Tests
 				string str = SCommon.Base32.I.Encode(data);
 				byte[] retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;
@@ -95,7 +95,7 @@ namespace Charlotte.Tests
 				str = str.ToLower();
 				retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;
@@ -107,7 +107,7 @@ namespace Charlotte.Tests
 				str = new string(str.Select(chr => SCommon.CRandom.GetBoolean() ? char.ToLower(chr) : char.ToUpper(chr)).ToArray());
 				retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;
@@ -118,7 +118,7 @@ namespace Charlotte.Tests
 				str = SCommon.Base32.I.EncodeNoPadding(data);
 				retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;
@@ -130,7 +130,7 @@ namespace Charlotte.Tests
 				str = str.ToLower();
 				retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;
@@ -142,7 +142,7 @@ namespace Charlotte.Tests
 				str = new string(str.Select(chr => SCommon.CRandom.GetBoolean() ? char.ToLower(chr) : char.ToUpper(chr)).ToArray());
 				retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;
@@ -154,7 +154,7 @@ namespace Charlotte.Tests
 				str = RandomInsert(str, 0.3, new string[] { "\r\n", "\t", " ", "い", "ろは", "にほへ" });
 				retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;
@@ -166,7 +166,7 @@ namespace Charlotte.Tests
 				str = RandomInsert(str, 0.3, new string[] { "\r\n", "\t", " ", "い", "ろは", "にほへ" });
 				retData = SCommon.Base32.I.Decode(str);
 
-				Console.WriteLine(str + " --> " + SCommon.Hex.I.ToString(retData));
+				Console.WriteLine(str + " --> " + SCommon.Hex.I.GetString(retData));
 
 				if (SCommon.Comp(data, retData) != 0) // ? 不一致
 					throw null;

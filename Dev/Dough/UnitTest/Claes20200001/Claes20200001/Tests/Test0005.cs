@@ -19,7 +19,7 @@ namespace Charlotte.Tests
 				if (testcnt % 1000 == 0) Console.WriteLine("TEST-0005-01, " + testcnt); // cout
 
 				byte[] data = SCommon.CRandom.GetBytes(SCommon.CRandom.GetInt(1000));
-				string str = SCommon.Hex.I.ToString(data);
+				string str = SCommon.Hex.I.GetString(data);
 
 				if (str == null)
 					throw null;
@@ -30,7 +30,7 @@ namespace Charlotte.Tests
 				if (!Regex.IsMatch(str, "^[0-9a-f]*$"))
 					throw null;
 
-				byte[] retData = SCommon.Hex.I.ToBytes(str);
+				byte[] retData = SCommon.Hex.I.GetBytes(str);
 
 				if (retData == null)
 					throw null;
@@ -55,7 +55,7 @@ namespace Charlotte.Tests
 
 		private void Test02_a(string str, byte[] expectBytes)
 		{
-			byte[] bytes = SCommon.Hex.I.ToBytes(str);
+			byte[] bytes = SCommon.Hex.I.GetBytes(str);
 
 			if (SCommon.Comp(bytes, expectBytes) != 0) // ? 不一致
 				throw null;
