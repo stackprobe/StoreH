@@ -1371,6 +1371,13 @@ namespace Charlotte.Commons
 		// -- なので以下は保証される。
 		// ---- SCommon.GetJChars().Length == SCommon.GetJCharCodes().Count()
 
+		// memo: GetJCharCodes()で得られる文字について
+		// SJISから見ると以下の変換パターンがある。
+		// -- SJIS <<---->> Unicode
+		// -- SJIS ------>> Unicode <<---->> SJIS(元とは別の文字)
+		// Unicodeから見ると以下の変換パターンのみがある。
+		// -- Unicode <<---->> SJIS
+
 		/// <summary>
 		/// SJIS(CP-932)の2バイト文字を全て返す。
 		/// 戻り値の文字コード：Unicode

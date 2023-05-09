@@ -104,5 +104,36 @@ namespace Charlotte.Tests
 			UInt16 chrSJIS = (UInt16)(((int)bytes[0] << 8) | (int)bytes[1]);
 			return chrSJIS;
 		}
+
+		public void Test02()
+		{
+			EncodePairInfo[] rows = SCommon.GetJCharCodes().Select(chrSJIS =>
+			{
+				char unicode = SJISCharToUnicode(chrSJIS);
+				UInt16 chrSJIS_R = UnicodeToSJISChar(unicode);
+
+				return new EncodePairInfo()
+				{
+					SJISChar = (int)chrSJIS,
+					Unicode = (int)unicode,
+					SJISChar_R = (int)chrSJIS_R,
+				};
+			})
+			.ToArray();
+
+			File.WriteAllLines(
+				SCommon.NextOutputPath() + ".txt",
+				rows.Select(row => string.Format("[{0:x4}] ---->> [{1:x4}]", row.SJISChar, row.Unicode)),
+				SCommon.ENCODING_SJIS
+				);
+
+			rows = rows.DistinctOrderBy((a, b) => a.Unicode - b.Unicode).ToArray();
+
+			File.WriteAllLines(
+				SCommon.NextOutputPath() + ".txt",
+				rows.Select(row => string.Format("[{0:x4}] ---->> [{1:x4}]", row.Unicode, row.SJISChar_R)),
+				SCommon.ENCODING_SJIS
+				);
+		}
 	}
 }
