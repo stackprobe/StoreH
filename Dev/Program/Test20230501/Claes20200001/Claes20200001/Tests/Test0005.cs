@@ -45,8 +45,9 @@ namespace Charlotte.Tests
 
 		public void Test02()
 		{
+			Test02_a(@"C:\temp");
 			//Test02_a(@"C:\Dev\Dough\Game");
-			Test02_a(@"C:\home\画像");
+			//Test02_a(@"C:\home\画像");
 		}
 
 		private void Test02_a(string dir)
@@ -54,6 +55,30 @@ namespace Charlotte.Tests
 			foreach (string file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
 			{
 				Console.WriteLine(SCommon.Hex.I.GetString(SCommon.GetSHA512File(file)) + " " + file);
+			}
+		}
+
+		public void Test03()
+		{
+			Test03_a(@"C:\home\GitHub\StoreH\Dev");
+			Test03_a(@"C:\home\GitHub\StoreH\DevOld");
+		}
+
+		private void Test03_a(string dir)
+		{
+			foreach (string file in Directory.GetFiles(dir, "_Tree.txt", SearchOption.AllDirectories))
+			{
+				foreach (string line in File.ReadAllLines(file, Encoding.UTF8))
+				{
+					if (line.StartsWith("\t-> File / "))
+					{
+						string str = line.Substring(11, 32);
+						byte[] data = SCommon.Base32.I.Decode(str);
+						string hash = SCommon.Hex.I.GetString(data);
+
+						Console.WriteLine(hash);
+					}
+				}
 			}
 		}
 	}
