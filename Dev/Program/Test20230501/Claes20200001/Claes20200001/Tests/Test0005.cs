@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Charlotte.Commons;
+using Charlotte.Utilities;
 
 namespace Charlotte.Tests
 {
@@ -94,6 +95,62 @@ namespace Charlotte.Tests
 					}
 				}
 			}
+		}
+
+		public void Test04()
+		{
+			foreach (char chr in SCommon.GetJChars())
+			{
+				File.WriteAllBytes(@"C:\temp\" + chr, SCommon.EMPTY_BYTES);
+			}
+		}
+
+		public void Test05()
+		{
+			UInt16[] chrSJISs = SCommon.GetJCharCodes().ToArray();
+			char[] unicodes = chrSJISs.Select(chrSJIS => SJISCharToUnicode(chrSJIS)).ToArray();
+			UInt16[] chrSJISs_R = unicodes.Select(unicode => UnicodeToSJISChar(unicode)).ToArray();
+
+			using (CsvFileWriter writer = new CsvFileWriter(@"C:\temp\S2U2S.csv"))
+			{
+				for (int index = 0; index < chrSJISs.Length; index++)
+				{
+					writer.WriteRow(new string[]
+					{
+						chrSJISs[index].ToString("x4"), 
+						((UInt16)unicodes[index]).ToString("x4"), 
+						chrSJISs_R[index].ToString("x4"), 
+					});
+				}
+			}
+		}
+
+		private char SJISCharToUnicode(UInt16 chrSJIS)
+		{
+			byte[] bytes = new byte[]
+			{
+				(byte)(chrSJIS >> 8),
+				(byte)(chrSJIS & 0xff),
+			};
+
+			string str = SCommon.ENCODING_SJIS.GetString(bytes);
+
+			if (str.Length != 1)
+				throw null;
+
+			return str[0];
+		}
+
+		private UInt16 UnicodeToSJISChar(char unicode)
+		{
+			string str = new string(new char[] { unicode });
+			byte[] bytes = SCommon.ENCODING_SJIS.GetBytes(str);
+
+			if (bytes.Length != 2)
+				throw null;
+
+			UInt16 chrSJIS = (UInt16)(((int)bytes[0] << 8) | (int)bytes[1]);
+			return chrSJIS;
 		}
 	}
 }
