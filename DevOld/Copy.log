@@ -16,6 +16,12 @@ T C:\home\GitHub\StoreH\DevOld\CopyDevBinToDevOld\out
 T C:\home\GitHub\StoreH\DevOld\CopyDevGameGameJSToStoreP\doc
 < C:\DevBin\20230509_Program\CopyDevGameGameJSToStoreP\out
 T C:\home\GitHub\StoreH\DevOld\CopyDevGameGameJSToStoreP\out
+< C:\DevBin\20230511_GameSetSourceOfResource\Claes20200001
+> C:\home\GitHub\StoreH\DevOld\GameSetSourceOfResource\Claes20200001
+< C:\DevBin\20230511_GameSetSourceOfResource\doc
+T C:\home\GitHub\StoreH\DevOld\GameSetSourceOfResource\doc
+< C:\DevBin\20230511_GameSetSourceOfResource\out
+T C:\home\GitHub\StoreH\DevOld\GameSetSourceOfResource\out
 < C:\DevBin\20230498_Program\Test20230401\Claes20200001
 > C:\home\GitHub\StoreH\DevOld\Test20230401\Claes20200001
 < C:\DevBin\20230498_Program\Test20230401\doc
