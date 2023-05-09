@@ -2708,6 +2708,16 @@ namespace Charlotte.Commons
 				return TimeStampToSec.ToSec(this.ToTimeStamp());
 			}
 
+			public static SimpleDateTime operator ++(SimpleDateTime instance)
+			{
+				return instance + 1;
+			}
+
+			public static SimpleDateTime operator --(SimpleDateTime instance)
+			{
+				return instance - 1;
+			}
+
 			public static SimpleDateTime operator +(SimpleDateTime instance, long sec)
 			{
 				return new SimpleDateTime(instance.ToSec() + sec);

@@ -89,7 +89,7 @@ namespace Charlotte.Tests
 								Console.WriteLine("<- " + s);
 								break;
 							}
-							dt -= 1;
+							dt--;
 						}
 					}
 				}
