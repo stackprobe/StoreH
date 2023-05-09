@@ -268,6 +268,20 @@ namespace Charlotte.Tests
 
 			// ----
 
+			aRet = new ArraySpliceSequencer<char>(new char[0])
+				.Splice(0, 0, "YYYY".ToArray())
+				.Splice(0, 0, "/MM/DD".ToArray())
+				.Splice(0, 0, " ".ToArray())
+				.Splice(0, 0, "HH:".ToArray())
+				.Splice(0, 0, "II:SS".ToArray())
+				.GetArray();
+			ret = new string(aRet);
+
+			if (ret != "YYYY/MM/DD HH:II:SS")
+				throw null;
+
+			// ----
+
 			Console.WriteLine("OK! (TEST-0015-04)");
 		}
 	}

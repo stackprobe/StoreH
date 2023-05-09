@@ -28,11 +28,13 @@ static void SSOR_ReplaceSORLine(void)
 
 	index = findLine(lines, SSOR_REPLACE_TARGET_LINE);
 
-	errorCase(index == getCount(lines));
-
-	memFree((void *)desertElement(lines, index));
-	InsertLinesToLines(lines, index, SSOR_Sources);
-	writeLines(ManualFile, lines);
+	if (index < getCount(lines))
+	{
+		memFree((void *)desertElement(lines, index));
+		InsertLinesToLines(lines, index, SSOR_Sources);
+		writeLines(ManualFile, lines);
+	}
+	releaseDim(lines, 1);
 }
 static void SetSourceOfResource(void)
 {

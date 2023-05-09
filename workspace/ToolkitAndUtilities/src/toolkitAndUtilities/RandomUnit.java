@@ -72,14 +72,16 @@ public class RandomUnit {
 		if (modulo < 1) {
 			throw new Error("Bad modulo");
 		}
-		return getLong63() % modulo;
+		long t = (Long.MAX_VALUE % modulo + 1) % modulo;
+		long r;
+
+		while ((r = getLong63()) < t);
+
+		return r % modulo;
 	}
 
 	public int getInt(int modulo) {
-		if (modulo < 1) {
-			throw new Error("Bad modulo");
-		}
-		return (int)(getLong63() % (long)modulo);
+		return (int)getLong((long)modulo);
 	}
 
 	public int getRange(int minval, int maxval) {
