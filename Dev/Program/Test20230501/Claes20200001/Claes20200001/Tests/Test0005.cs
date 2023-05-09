@@ -77,6 +77,20 @@ namespace Charlotte.Tests
 						string hash = SCommon.Hex.I.GetString(data);
 
 						Console.WriteLine(hash);
+
+						SCommon.SimpleDateTime dt = SCommon.SimpleDateTime.Now();
+						for (long sec = 0; sec < 86400 * 3; sec++)
+						{
+							string s = "ファイル更新日時 " + dt;
+							byte[] h = SCommon.GetPart(SCommon.GetSHA512(SCommon.ENCODING_SJIS.GetBytes(s)), 0, 20);
+
+							if (SCommon.Comp(h, data) == 0)
+							{
+								Console.WriteLine("<- " + s);
+								break;
+							}
+							dt -= 1;
+						}
 					}
 				}
 			}
