@@ -19,9 +19,6 @@
 	RenameAll
 	RenameAllSub
 
-	DvCmHs
-	DvUtHs
-
 ----
 
 ”z‰º‚ÌƒŠƒrƒ‹ƒh
