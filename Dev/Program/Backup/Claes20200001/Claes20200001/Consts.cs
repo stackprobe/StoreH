@@ -41,8 +41,6 @@ namespace Charlotte
 			"Windows",
 			"Windows.old",
 			"WINNT",
-
-			"IgnoreBkCDIS", // 個人的に設定したバックアップ除外フォルダ
 		};
 
 		/// <summary>
