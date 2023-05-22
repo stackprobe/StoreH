@@ -3904,8 +3904,9 @@ C:\Factory\DevTools\adjustNamespace.c(48) : GetProjRootNamespace // ŠÖ”
 C:\Factory\DevTools\adjustNamespace.c(74) : NSWithBracket // •Ï”–”‚ÍéŒ¾
 C:\Factory\DevTools\adjustNamespace.c(76) : GetNamespaceFromLine // ŠÖ”
 C:\Factory\DevTools\adjustNamespace.c(94) : GetNamespaceFromPath // ŠÖ”
-C:\Factory\DevTools\adjustNamespace.c(106) : AdjustNamespace // ŠÖ”
-C:\Factory\DevTools\adjustNamespace.c(190) : main // ŠÖ”
+C:\Factory\DevTools\adjustNamespace.c(106) : SetClassNameToClassTop // ŠÖ”
+C:\Factory\DevTools\adjustNamespace.c(131) : AdjustNamespace // ŠÖ”
+C:\Factory\DevTools\adjustNamespace.c(242) : main // ŠÖ”
 C:\Factory\DevTools\adjustPackage.c(9) : BatchMode // •Ï”–”‚ÍéŒ¾
 C:\Factory\DevTools\adjustPackage.c(11) : GetPackageFromLine // ŠÖ”
 C:\Factory\DevTools\adjustPackage.c(18) : GetPackageFromPath // ŠÖ”
@@ -5097,6 +5098,7 @@ C:\Factory\Labo\Junk\Ques\sum100.c(3) : SUM_MAX // ’è‹`
 C:\Factory\Labo\Junk\Ques\sum100.c(5) : PtnNum // •Ï”–”‚ÍéŒ¾
 C:\Factory\Labo\Junk\Ques\sum100.c(7) : TryNext // ŠÖ”
 C:\Factory\Labo\Junk\Ques\sum100.c(22) : main // ŠÖ”
+C:\Factory\Labo\Junk\RepeatFile.c(3) : main // ŠÖ”
 C:\Factory\Labo\Junk\RndSqShiftXor.c(22) : SHIFT_B // ’è‹`
 C:\Factory\Labo\Junk\RndSqShiftXor.c(24) : Counters // •Ï”–”‚ÍéŒ¾
 C:\Factory\Labo\Junk\RndSqShiftXor.c(26) : ShiftV // ŠÖ”

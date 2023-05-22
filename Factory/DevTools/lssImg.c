@@ -38,6 +38,9 @@ readArgs:
 
 	fp = fileOpen(outFile, "wt");
 	writeLine(fp, "<html>");
+	writeLine(fp, "<head>");
+	writeLine(fp, "<meta charset=\"Shift_JIS\" />");
+	writeLine(fp, "</head>");
 	writeLine(fp, "<body>");
 
 	foreach (imgFiles, imgFile, index)

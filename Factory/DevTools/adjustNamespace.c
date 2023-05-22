@@ -103,6 +103,31 @@ static char *GetNamespaceFromPath(char *rootNamespace, char *rootDir, char *file
 	memFree(file);
 	return namespace;
 }
+static char *SetClassNameToClassTop(char *oldClassTop, char *className)
+{
+	char *newClassTop;
+	char *p;
+	char *q;
+
+	p = strstrNext(oldClassTop, "\x20""class\x20");
+
+	if (!p)
+	{
+		p = strstrNext(oldClassTop, "\x20""struct\x20");
+		errorCase(!p);
+	}
+	q = strchr(p, ':');
+
+	newClassTop = strxRng(oldClassTop, p);
+	newClassTop = addLine(newClassTop, className);
+
+	if (q)
+	{
+		newClassTop = addChar(newClassTop, ' ');
+		newClassTop = addLine(newClassTop, q);
+	}
+	return newClassTop;
+}
 static void AdjustNamespace(char *targetDir)
 {
 	char *projFile;
@@ -167,6 +192,33 @@ static void AdjustNamespace(char *targetDir)
 					}
 					memFree(oldNamespace);
 					memFree(newNamespace);
+				}
+				// インデント1段 + public --> このソースファイルのクラス・構造体の最初の1行と見なす。
+				if (lineExp("\tpublic <1,,>", line))
+				{
+					char *oldClassTop = UTF8ToSJISText(line);
+					char *newClassTop;
+					char *className;
+
+					className = changeExt(getLocal(relFile), "");
+					newClassTop = SetClassNameToClassTop(oldClassTop, className);
+
+					cout("F %s\n", relFile);
+					cout("C %s\n", className);
+					cout("< %s\n", oldClassTop);
+					cout("> %s\n", newClassTop);
+
+					if (strcmp(oldClassTop, newClassTop))
+					{
+						LOGPOS();
+						memFree(line);
+						line = SJISToUTF8Text(newClassTop);
+						setElement(lines, index, (uint)line);
+						modified = 1;
+					}
+					memFree(oldClassTop);
+					memFree(newClassTop);
+					memFree(className);
 				}
 			}
 			if (modified)
