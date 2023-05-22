@@ -29,9 +29,11 @@ public class UnitTestMain {
 			//test0005_04(); // SCommon.tokenize
 			//test0006_01(); // SCommon.merge
 			//test0007_01(); // SCommon.Hex
-			test0008_01(); // SCommon.SimpleDateTime
+			//test0008_01(); // SCommon.SimpleDateTime
 			//test0009_01(); // SCommon.TimeStampToSec
 			//test0009_02(); // SCommon.TimeStampToSec
+			//test0010_01(); // SCommon.Serializer
+			test0011_01(); // SCommon.compress, SCommon.decompress
 
 			// --
 		}
@@ -554,5 +556,75 @@ public class UnitTestMain {
 				s;
 
 		return returnTimeStamp;
+	}
+
+	private static void test0010_01() {
+		char[] TEST_CHARS = (SCommon.HALF + "いろはにほへと★日本語").toCharArray();
+
+		for (int testcnt = 0; testcnt < 1000; testcnt++) {
+			if (testcnt % 100 == 0) System.out.println("TEST-0010-01, " + testcnt); // cout
+
+			List<String> lines = Stream.generate(() -> new String(SCommon
+					.toCharArray(Stream.generate(() -> TEST_CHARS[SCommon.cryptRandom.getInt(TEST_CHARS.length)])
+					.limit(SCommon.cryptRandom.getInt(100)).collect(Collectors.toList()))))
+					.limit(SCommon.cryptRandom.getInt(100))
+					.collect(Collectors.toList());
+
+			String strSrlz = SCommon.Serializer.join(lines);
+
+			if (strSrlz == null) {
+				throw null;
+			}
+			if (strSrlz == "") {
+				throw null;
+			}
+			if (!Pattern.matches("^[0-9][A-Za-z0-9+/]*[0-9]$", strSrlz)) {
+				throw null;
+			}
+
+			List<String> retLines = SCommon.Serializer.split(strSrlz);
+
+			if (retLines == null) {
+				throw null;
+			}
+			if (SCommon.compare(lines, retLines, (a, b) -> a.compareTo(b)) != 0) { // ? not same
+				throw null;
+			}
+		}
+		System.out.println("OK!");
+	}
+
+	private static void test0011_01() {
+		test0011_01_a(100, 30000);
+		test0011_01_a(300, 10000);
+		test0011_01_a(1000, 3000);
+		test0011_01_a(3000, 1000);
+		test0011_01_a(10000, 300);
+		test0011_01_a(30000, 100);
+
+		System.out.println("OK!");
+	}
+
+	private static void test0011_01_a(int dataSizeScale, int testCount) {
+		System.out.println(SCommon.joining(", ", "TEST-0011-01", dataSizeScale, testCount));
+
+		for (int testcnt = 0; testcnt < testCount; testcnt++) {
+			byte[] data = SCommon.cryptRandom.getBytes(SCommon.cryptRandom.getInt(dataSizeScale));
+			byte[] gzData = SCommon.compress(data);
+
+			if (gzData == null) {
+				throw null;
+			}
+
+			byte[] retData = SCommon.decompress(gzData);
+
+			if (retData == null) {
+				throw null;
+			}
+			if (SCommon.compare(data, retData) != 0) { // ? not same
+				throw null;
+			}
+		}
+		System.out.println("OK");
 	}
 }

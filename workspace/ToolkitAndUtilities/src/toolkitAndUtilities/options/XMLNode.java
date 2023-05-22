@@ -1,5 +1,5 @@
 package toolkitAndUtilities.options;
 
 public class XMLNode {
-	// TODO
+	// see: https://github.com/stackprobe/Spica01/blob/master/charlotte/tools/XmlNode.java
 }

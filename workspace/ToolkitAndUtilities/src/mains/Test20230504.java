@@ -9,7 +9,8 @@ public class Test20230504 {
 			// -- choose one --
 
 			//test01();
-			test02();
+			//test02();
+			test03();
 
 			// --
 		}
@@ -43,5 +44,32 @@ public class Test20230504 {
 		System.out.println(Double.parseDouble("NaN"));
 		System.out.println(Double.parseDouble("Infinity"));
 		System.out.println(Double.parseDouble("-Infinity"));
+	}
+
+	private static void test03() {
+		{
+			AutoCloseable ac = () -> System.out.println("close");
+			System.out.println("before");
+			try (ac) {
+				System.out.println("inside");
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			System.out.println("after");
+		}
+
+		// ----
+
+		{
+			System.out.println("before");
+			try (AutoCloseable ac = () -> System.out.println("close")) {
+				System.out.println("inside");
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			System.out.println("after");
+		}
 	}
 }

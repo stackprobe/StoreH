@@ -1,5 +1,5 @@
 package toolkitAndUtilities.options;
 
 public class HTTPClient {
-	// TODO
+	// see: https://github.com/stackprobe/Spica01/blob/master/charlotte/tools/HTTPClient.java
 }

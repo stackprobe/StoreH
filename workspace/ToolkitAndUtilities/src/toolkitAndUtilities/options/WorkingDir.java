@@ -1,5 +1,5 @@
 package toolkitAndUtilities.options;
 
 public class WorkingDir {
-	// TODO
+	// see: https://github.com/stackprobe/Spica01/blob/master/charlotte/tools/WorkingDir.java
 }

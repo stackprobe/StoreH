@@ -298,8 +298,8 @@ public class SCommon {
 
 	public static byte[] compress(byte[] src) {
 		try (ByteArrayOutputStream mem = new ByteArrayOutputStream();
-				GZIPOutputStream wrtier = new GZIPOutputStream(mem)
-				) {
+				GZIPOutputStream wrtier = new GZIPOutputStream(mem)) {
+
 			wrtier.write(src);
 			wrtier.finish();
 			return mem.toByteArray();
@@ -312,8 +312,8 @@ public class SCommon {
 	public static byte[] decompress(byte[] src) {
 		try (ByteArrayInputStream mem = new ByteArrayInputStream(src);
 				GZIPInputStream reader = new GZIPInputStream(mem);
-				ByteArrayOutputStream writer = new ByteArrayOutputStream()
-				) {
+				ByteArrayOutputStream writer = new ByteArrayOutputStream()) {
+
 			byte[] buff = new byte[16 * 1024];
 
 			for (; ; ) {
@@ -584,7 +584,63 @@ public class SCommon {
 	}
 
 	public static class Serializer {
-		// TODO
+		public static String join(List<String> plainStrings) {
+			if (plainStrings == null) {
+				throw new Error("no plainStrings");
+			}
+			if (plainStrings.stream().anyMatch(plainString -> plainString == null)) {
+				throw new Error("Bad plainStrings");
+			}
+
+			return encode(SCommon.Base64.encodeNoPadding(SCommon
+					.compress(SCommon.splittableJoin(plainStrings.stream()
+					.map(plainString -> SCommon.re(() -> plainString.getBytes(SCommon.CHARSET_UTF8)))
+					.collect(Collectors.toList())))));
+		}
+
+		public static List<String> split(String serializedString) {
+			if (serializedString == null) {
+				throw new Error("no serializedString");
+			}
+			if (!Pattern.matches("^[0-9][A-Za-z0-9+/]*[0-9]$", serializedString)) {
+				throw new Error("Bad serializedString");
+			}
+
+			return Arrays.asList(SCommon.split(SCommon
+					.decompress(SCommon.Base64.decode(decode(serializedString))))).stream()
+					.map(decodedBlock -> SCommon.re(() -> new String(decodedBlock, SCommon.CHARSET_UTF8)))
+					.collect(Collectors.toList());
+		}
+
+		private static String encode(String str) {
+			int stAn = 0;
+			int edAn = 0;
+
+			if (str.startsWith("H4sIA")) {
+				for (stAn = 1; stAn < 9; stAn++) {
+					int i = 4 + stAn;
+					if (str.length() <= i || str.charAt(i) != 'A') {
+						break;
+					}
+				}
+				str = str.substring(4 + stAn);
+			}
+
+			for (edAn = 0; edAn < 9; edAn++) {
+				int i = str.length() - 1 - edAn;
+				if (i < 0 || str.charAt(i) != 'A') {
+					break;
+				}
+			}
+			str = str.substring(0, str.length() - edAn);
+
+			return stAn + str + edAn;
+		}
+
+		private static String decode(String str) {
+			return (str.charAt(0) == '0' ? "" : "H4sI") + "A".repeat(str.charAt(0) - '0') +
+					str.substring(1, str.length() - 1) + "A".repeat(str.charAt(str.length() - 1) - '0');
+		}
 	}
 
 	public static <T> Map<String, T> createMap() {
